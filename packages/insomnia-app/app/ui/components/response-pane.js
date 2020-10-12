@@ -32,6 +32,7 @@ import { showError } from '../components/modals/index';
 import { json as jsonPrettify } from 'insomnia-prettify';
 import type { Environment } from '../../models/environment';
 import type { UnitTestResult } from '../../models/unit-test-result';
+import { exportHarCurrentRequest } from '../../common/har';
 
 type Props = {
   // Functions
@@ -165,6 +166,37 @@ class ResponsePane extends React.PureComponent<Props> {
         console.warn('Failed to save full response', err);
       });
     }
+  }
+
+  async _handleExportAsHAR() {
+    const { response, request } = this.props;
+
+    if (!response || !request) {
+      // Should never happen
+      console.warn('No response to download');
+      return;
+    }
+
+    const data = await exportHarCurrentRequest(request, response);
+    const har = JSON.stringify(data, null, '\t');
+
+    const options = {
+      title: 'Export As HAR',
+      buttonLabel: 'Save',
+      defaultPath: `${request.name.replace(/ +/g, '_')}-${Date.now()}.har`,
+    };
+
+    remote.dialog.showSaveDialog(options, filename => {
+      if (!filename) {
+        return;
+      }
+
+      const to = fs.createWriteStream(filename);
+      to.on('error', err => {
+        console.warn('Failed to export har', err);
+      });
+      to.end(har);
+    });
   }
 
   _handleTabSelect(index: number, lastIndex: number) {
@@ -316,6 +348,7 @@ class ResponsePane extends React.PureComponent<Props> {
               <PreviewModeDropdown
                 download={this._handleDownloadResponseBody}
                 fullDownload={this._handleDownloadFullResponseBody}
+                exportAsHAR={this._handleExportAsHAR}
                 previewMode={previewMode}
                 updatePreviewMode={handleSetPreviewMode}
                 showPrettifyOption={response.contentType.includes('json')}

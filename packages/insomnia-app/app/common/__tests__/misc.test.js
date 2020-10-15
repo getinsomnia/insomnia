@@ -202,3 +202,13 @@ describe('chunkArray()', () => {
     expect(chunks).toEqual([[1, 2]]);
   });
 });
+
+describe('xmlDecode()', () => {
+  it('unescape characters', () => {
+    expect(
+      misc.xmlDecode(
+        '&lt;a href=&quot;http://example.com?query1=value1&amp;query2=value2&quot;&gt;a link&lt;/a&gt;',
+      ),
+    ).toEqual('<a href="http://example.com?query1=value1&query2=value2">a link</a>');
+  });
+});

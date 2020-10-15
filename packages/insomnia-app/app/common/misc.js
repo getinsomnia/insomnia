@@ -194,6 +194,17 @@ export function preventDefault(e: Event): void {
   e.preventDefault();
 }
 
+export function xmlDecode(s: string) {
+  const ESCAPED_CHARACTERS_MAP = {
+    '&amp;': '&',
+    '&quot;': '"',
+    '&lt;': '<',
+    '&gt;': '>',
+  };
+
+  return s.replace(/(&quot;|&lt;|&gt;|&amp;)/g, (str, item) => ESCAPED_CHARACTERS_MAP[item]);
+}
+
 export function clickLink(href: string): void {
   electron.shell.openExternal(href);
 }

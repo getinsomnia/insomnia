@@ -2,7 +2,6 @@
 import * as React from 'react';
 import iconv from 'iconv-lite';
 import autobind from 'autobind-decorator';
-import { shell } from 'electron';
 import PDFViewer from './response-pdf-viewer';
 import CSVViewer from './response-csv-viewer';
 import CodeEditor from '../codemirror/code-editor';
@@ -19,6 +18,7 @@ import {
 import KeydownBinder from '../keydown-binder';
 import { executeHotKey } from '../../../common/hotkeys-listener';
 import { hotKeyRefs } from '../../../common/hotkeys';
+import { clickLink, xmlDecode } from '../../../common/misc';
 
 let alwaysShowLargeResponses = false;
 
@@ -78,8 +78,16 @@ class ResponseViewer extends React.Component<Props, State> {
     }
   }
 
-  _handleOpenLink(link: string) {
-    shell.openExternal(link);
+  _handleDecodeAndOpenLink(mode: string) {
+    return aLink => {
+      let link = aLink;
+
+      if (mode === 'application/xml') {
+        link = xmlDecode(link);
+      }
+
+      return clickLink(link);
+    };
   }
 
   _handleDismissBlocker() {
@@ -318,6 +326,7 @@ class ResponseViewer extends React.Component<Props, State> {
     } else if (previewMode === PREVIEW_MODE_FRIENDLY && ct.includes('html')) {
       const match = contentType.match(/charset=([\w-]+)/);
       const charset = match && match.length >= 2 ? match[1] : 'utf-8';
+      console.log('==> ResponseWebView ?');
       return (
         <ResponseWebView
           body={this._decodeIconv(bodyBuffer, charset)}
@@ -410,7 +419,7 @@ class ResponseViewer extends React.Component<Props, State> {
           lineWrapping={editorLineWrapping}
           mode={mode}
           noMatchBrackets
-          onClickLink={disablePreviewLinks ? null : this._handleOpenLink}
+          onClickLink={disablePreviewLinks ? null : this._handleDecodeAndOpenLink(mode)}
           placeholder="..."
           readOnly
           uniquenessKey={responseId}

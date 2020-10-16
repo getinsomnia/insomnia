@@ -163,6 +163,8 @@ export const hotKeyRefs: { [string]: HotKeyDefinition } = {
 
   ENVIRONMENT_UNCOVER_VARIABLES: defineHotKey('environment_uncoverVariables', 'Uncover Variables'),
 
+  BEAUTIFY_REQUEST_BODY: defineHotKey('beautifyRequestBody', 'Beautify Request Body'),
+
   // Designer-specific
   SHOW_SPEC_EDITOR: defineHotKey('activity_specEditor', 'Show Spec Activity'),
   SHOW_TEST: defineHotKey('activity_test', 'Show Test Activity'),
@@ -336,6 +338,11 @@ const defaultRegistry: HotKeyRegistry = {
   [hotKeyRefs.ENVIRONMENT_UNCOVER_VARIABLES.id]: keyBinds(
     keyComb(false, true, true, false, keyboardKeys.u.keyCode),
     keyComb(false, true, true, false, keyboardKeys.u.keyCode),
+  ),
+
+  [hotKeyRefs.BEAUTIFY_REQUEST_BODY.id]: keyBinds(
+    keyComb(false, false, true, true, keyboardKeys.i.keyCode),
+    keyComb(true, false, true, false, keyboardKeys.i.keyCode),
   ),
 
   [hotKeyRefs.SHOW_SPEC_EDITOR.id]: keyBinds(

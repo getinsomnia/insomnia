@@ -1,6 +1,7 @@
 // @flow
 import fs from 'fs';
 import clone from 'clone';
+import * as db from './database';
 import { Cookie as toughCookie } from 'tough-cookie';
 import * as models from '../models';
 import type { RenderedRequest } from './render';
@@ -172,7 +173,34 @@ export type Har = {
 export type ExportRequest = {
   requestId: string,
   environmentId: string | null,
+  responseId?: string,
 };
+
+export async function exportHarCurrentRequest(request: Request, response: Response): Promise<Har> {
+  const ancestors: Array<BaseModel> = await db.withAncestors(request, [
+    models.workspace.type,
+    models.requestGroup.type,
+  ]);
+  const workspace = ancestors.find(ancestor => ancestor.type === models.workspace.type);
+  if (workspace === null) {
+    throw new TypeError('no workspace found for request');
+  }
+
+  const workspaceMeta = await models.workspaceMeta.getByParentId(workspace._id);
+  let environmentId = workspaceMeta ? workspaceMeta.activeEnvironmentId : null;
+  const environment = await models.environment.getById(environmentId || 'n/a');
+  if (!environment || environment.isPrivate) {
+    environmentId = 'n/a';
+  }
+
+  return exportHar([
+    {
+      requestId: request._id,
+      environmentId: environmentId,
+      responseId: response._id,
+    },
+  ]);
+}
 
 export async function exportHar(exportRequests: Array<ExportRequest>): Promise<Har> {
   // Export HAR entries with the same start time in order to keep their workspace sort order.
@@ -189,10 +217,16 @@ export async function exportHar(exportRequests: Array<ExportRequest>): Promise<H
       continue;
     }
 
-    const response: ResponseModel | null = await models.response.getLatestForRequest(
-      exportRequest.requestId,
-      exportRequest.environmentId || null,
-    );
+    let response: ResponseModel | null;
+    if (exportRequest.responseId) {
+      response = await models.response.getById(exportRequest.responseId);
+    } else {
+      response = await models.response.getLatestForRequest(
+        exportRequest.requestId,
+        exportRequest.environmentId || null,
+      );
+    }
+
     const harResponse = await exportHarResponse(response);
     if (!harResponse) {
       continue;

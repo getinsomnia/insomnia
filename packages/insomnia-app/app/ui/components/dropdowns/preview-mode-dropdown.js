@@ -7,6 +7,7 @@ import { getPreviewModeName, PREVIEW_MODES } from '../../../common/constants';
 type Props = {|
   download: (pretty: boolean) => any,
   fullDownload: (pretty: boolean) => any,
+  exportAsHAR: () => any,
   updatePreviewMode: string => any,
   previewMode: string,
   showPrettifyOption?: boolean,
@@ -40,7 +41,7 @@ class PreviewModeDropdown extends React.PureComponent<Props> {
   }
 
   render() {
-    const { fullDownload, previewMode, showPrettifyOption } = this.props;
+    const { fullDownload, previewMode, showPrettifyOption, exportAsHAR } = this.props;
 
     return (
       <Dropdown beside>
@@ -64,6 +65,10 @@ class PreviewModeDropdown extends React.PureComponent<Props> {
         <DropdownItem onClick={fullDownload}>
           <i className="fa fa-bug" />
           Save HTTP Debug
+        </DropdownItem>
+        <DropdownItem onClick={exportAsHAR}>
+          <i className="fa fa-save" />
+          Export As HAR
         </DropdownItem>
       </Dropdown>
     );

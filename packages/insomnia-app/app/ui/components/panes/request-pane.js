@@ -31,6 +31,10 @@ import type { ForceToWorkspace } from '../../redux/modules/helpers';
 import PlaceholderRequestPane from './placeholder-request-pane';
 import { Pane, paneBodyClasses, PaneHeader } from './pane';
 import classnames from 'classnames';
+import { getRequestTabs, RequestTab } from '../../../plugins';
+import * as pluginContexts from '../../../plugins/context';
+import HtmlElementWrapper from '../html-element-wrapper';
+import { RENDER_PURPOSE_NO_RENDER } from '../../../common/render';
 import { queryAllWorkspaceUrls } from '../../../models/helpers/query-all-workspace-urls';
 
 type Props = {
@@ -71,8 +75,20 @@ type Props = {
   oAuth2Token: ?OAuth2Token,
 };
 
+type RequestTabWithBody = RequestTab & {
+  body: HTMLElement | Promise<HTMLElement>,
+};
+
+type State = {
+  requestTabs: Array<RequestTabWithBody>,
+};
+
 @autobind
-class RequestPane extends React.PureComponent<Props> {
+class RequestPane extends React.PureComponent<Props, State> {
+  state = {
+    requestTabs: [],
+  };
+
   _handleEditDescriptionAdd() {
     this._handleEditDescription(true);
   }
@@ -84,7 +100,39 @@ class RequestPane extends React.PureComponent<Props> {
     });
   }
 
-  _autocompleteUrls(): Promise<Array<string>> {
+  async _handleRequestTabs() {
+    const { request, environmentId } = this.props;
+    this.setState({ requestTabs: [] });
+    try {
+      const tabs = await getRequestTabs();
+      for (const tab of tabs) {
+        const context = {
+          ...(pluginContexts.app.init(RENDER_PURPOSE_NO_RENDER): Object),
+          ...(pluginContexts.data.init(): Object),
+          ...(pluginContexts.store.init(tab.plugin): Object),
+          ...(pluginContexts.network.init(environmentId): Object),
+        };
+
+        const body = await tab.panelBody(context, { request });
+        this.setState(state => ({ requestTabs: [...state.requestTabs, { ...tab, body }] }));
+      }
+    } catch (err) {
+      console.error('[plugins] Error getting request tabs', err);
+    }
+  }
+
+  async componentDidMount() {
+    await this._handleRequestTabs();
+  }
+
+  async componentDidUpdate(prevProps) {
+    const { request } = this.props;
+    if (prevProps.request && prevProps.request._id !== request._id) {
+      await this._handleRequestTabs();
+    }
+  }
+
+  async _autocompleteUrls(): Promise<Array<string>> {
     const { workspace, request } = this.props;
     return queryAllWorkspaceUrls(workspace, models.request.type, request?._id);
   }
@@ -179,6 +227,8 @@ class RequestPane extends React.PureComponent<Props> {
 
     const uniqueKey = `${forceRefreshCounter}::${request._id}`;
 
+    const { requestTabs } = this.state;
+
     return (
       <Pane type="request">
         <PaneHeader>
@@ -249,6 +299,16 @@ class RequestPane extends React.PureComponent<Props> {
                 )}
               </button>
             </Tab>
+            {requestTabs.map((p: RequestTabWithBody) => (
+              <Tab tabIndex="-1" key={`${request._id}::${p.plugin.name}::${p.label}`}>
+                <button>
+                  {p.label}
+                  <span className="bubble space-left">
+                    <i className={classnames('fa', p.icon || 'fa-code')} />
+                  </span>
+                </button>
+              </Tab>
+            ))}
           </TabList>
           <TabPanel key={uniqueKey} className="react-tabs__tab-panel editor-wrapper">
             <BodyEditor
@@ -388,6 +448,13 @@ class RequestPane extends React.PureComponent<Props> {
               </div>
             )}
           </TabPanel>
+          {requestTabs.map((p: RequestTabWithBody) => (
+            <TabPanel
+              className="react-tabs__tab-panel"
+              key={`${request._id}::${p.plugin.name}::${p.label}`}>
+              <HtmlElementWrapper el={p.body} className={'tall'} />
+            </TabPanel>
+          ))}
         </Tabs>
       </Pane>
     );

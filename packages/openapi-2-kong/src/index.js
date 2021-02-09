@@ -4,6 +4,7 @@ import path from 'path';
 import { generateDeclarativeConfigFromSpec } from './declarative-config';
 import { generateKongForKubernetesConfigFromSpec } from './kubernetes';
 import SwaggerParser from 'swagger-parser';
+import YAML from 'yaml';
 
 export async function generate(
   specPath: string,
@@ -55,7 +56,7 @@ export async function parseSpec(spec: string | Object): Promise<OpenApi3Spec> {
     try {
       api = JSON.parse(spec);
     } catch (err) {
-      api = SwaggerParser.YAML.parse(spec);
+      api = YAML.parse(spec);
     }
   } else {
     api = JSON.parse(JSON.stringify(spec));

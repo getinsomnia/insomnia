@@ -22,6 +22,7 @@ export type PluginConfigMap = {
 type BaseSettings = {
   autoHideMenuBar: boolean,
   autocompleteDelay: number,
+  autoPrettify: boolean,
   deviceId: string | null,
   disableHtmlPreviewJs: boolean,
   disableResponsePreviewLinks: boolean,
@@ -81,6 +82,7 @@ export function init(): BaseSettings {
   return {
     autoHideMenuBar: false,
     autocompleteDelay: 1200,
+    autoPrettify: false,
     deviceId: null,
     disableHtmlPreviewJs: false,
     disableResponsePreviewLinks: false,

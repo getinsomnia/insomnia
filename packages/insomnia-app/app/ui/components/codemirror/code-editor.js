@@ -1,3 +1,4 @@
+// @flow
 import * as React from 'react';
 import PropTypes from 'prop-types';
 import { autoBindMethodsForReact } from 'class-autobind-decorator';
@@ -26,6 +27,9 @@ import DropdownItem from '../base/dropdown/dropdown-item';
 import { query as queryXPath } from 'insomnia-xpath';
 import deepEqual from 'deep-equal';
 import zprint from 'zprint-clj';
+import KeydownBinder from '../keydown-binder';
+import { hotKeyRefs } from '../../../common/hotkeys';
+import { executeHotKey } from '../../../common/hotkeys-listener';
 
 const TAB_KEY = 9;
 const TAB_SIZE = 4;
@@ -531,6 +535,12 @@ class CodeEditor extends React.Component {
     }
   }
 
+  async _handleKeyDown(e: KeyboardEvent) {
+    executeHotKey(e, hotKeyRefs.BEAUTIFY_REQUEST_BODY, () => {
+      this._handleBeautify();
+    });
+  }
+
   /**
    * Sets options on the CodeMirror editor while also sanitizing them
    */
@@ -1033,26 +1043,28 @@ class CodeEditor extends React.Component {
     }
 
     return (
-      <div className={classes} style={style} data-editor-type={type}>
-        <div
-          className={classnames('editor__container', 'input', className)}
-          style={styles}
-          onClick={onClick}
-          onMouseLeave={onMouseLeave}>
-          <textarea
-            key={isVariableUncovered ? 'foo' : 'bar'}
-            id={id}
-            ref={this._handleInitTextarea}
-            style={{ display: 'none' }}
-            readOnly={readOnly}
-            autoComplete="off"
-            // NOTE: When setting this to empty string, it breaks the _ignoreNextChange
-            //   logic on initial component mount
-            defaultValue=" "
-          />
+      <KeydownBinder onKeydown={this._handleKeyDown}>
+        <div className={classes} style={style} data-editor-type={type}>
+          <div
+            className={classnames('editor__container', 'input', className)}
+            style={styles}
+            onClick={onClick}
+            onMouseLeave={onMouseLeave}>
+            <textarea
+              key={isVariableUncovered ? 'foo' : 'bar'}
+              id={id}
+              ref={this._handleInitTextarea}
+              style={{ display: 'none' }}
+              readOnly={readOnly}
+              autoComplete="off"
+              // NOTE: When setting this to empty string, it breaks the _ignoreNextChange
+              //   logic on initial component mount
+              defaultValue=" "
+            />
+          </div>
+          {toolbar}
         </div>
-        {toolbar}
-      </div>
+      </KeydownBinder>
     );
   }
 }

@@ -252,6 +252,29 @@ class WorkspaceSettingsModal extends React.PureComponent<Props, State> {
             </PromptButton>
           </div>
         </div>
+        <div className="pad-left">
+          <div>
+            {certificate.pfx && (
+              <span>
+                <strong>PFX:</strong> {certificate.pfx}
+              </span>
+            )}
+          </div>
+          <div>
+            {certificate.cert && (
+              <span>
+                <strong>CRT:</strong> {certificate.cert}
+              </span>
+            )}
+          </div>
+          <div>
+            {certificate.key && (
+              <span>
+                <strong>Key:</strong> {certificate.key}
+              </span>
+            )}
+          </div>
+        </div>
       </div>
     );
   }

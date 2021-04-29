@@ -230,10 +230,7 @@ class Wrapper extends React.PureComponent<WrapperProps, State> {
   async _handleForceUpdateRequest(r: Request, patch: Object): Promise<Request> {
     const newRequest = await rUpdate(r, patch);
 
-    // Give it a second for the app to render first. If we don't wait, it will refresh
-    // on the old request and won't catch the newest one.
-    // TODO: Move this refresh key into redux store so we don't need timeout
-    window.setTimeout(this._forceRequestPaneRefresh, 100);
+    this._forceRequestPaneRefreshAfterDelay();
 
     return newRequest;
   }
@@ -506,6 +503,13 @@ class Wrapper extends React.PureComponent<WrapperProps, State> {
     handleSetActiveEnvironment(id);
   }
 
+  _forceRequestPaneRefreshAfterDelay(): void {
+    // Give it a second for the app to render first. If we don't wait, it will refresh
+    // on the old request and won't catch the newest one.
+    // TODO: Move this refresh key into redux store so we don't need timeout
+    window.setTimeout(this._forceRequestPaneRefresh, 100);
+  }
+
   _forceRequestPaneRefresh(): void {
     this.setState({ forceRefreshKey: Date.now() });
   }
@@ -689,6 +693,7 @@ class Wrapper extends React.PureComponent<WrapperProps, State> {
 
             <SettingsModal
               ref={registerModal}
+              handleUpdateKeyBindings={this._forceRequestPaneRefreshAfterDelay}
               handleShowExportRequestsModal={handleShowExportRequestsModal}
               handleExportAllToFile={handleExportFile}
               handleImportClipBoard={this._handleImportClipBoard}

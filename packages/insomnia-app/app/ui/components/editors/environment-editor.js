@@ -11,17 +11,39 @@ import { NUNJUCKS_TEMPLATE_GLOBAL_PROPERTY_NAME } from '../../../templating';
 // Docs: https://github.com/DeNA/nedb#inserting-documents
 const INVALID_NEDB_KEY_REGEX = /^\$|\./;
 
-export const ensureKeyIsValid = (key: string): string | null => {
+export const ensureKeyIsValid = (key: string, isRoot: boolean = false): string | null => {
   if (key.match(INVALID_NEDB_KEY_REGEX)) {
     return `"${key}" cannot begin with '$' or contain a '.'`;
   }
 
-  if (key === NUNJUCKS_TEMPLATE_GLOBAL_PROPERTY_NAME) {
+  if (key === NUNJUCKS_TEMPLATE_GLOBAL_PROPERTY_NAME && isRoot) {
     return `"${NUNJUCKS_TEMPLATE_GLOBAL_PROPERTY_NAME}" is a reserved key`; // verbiage WIP
   }
 
   return null;
 };
+
+/**
+ * Recursively check keys of nested object and immediately return when found
+ * @param {object} obj - object to analyse
+ * @returns {boolean} - if any invalid key is found
+ */
+export function checkNestedKeys(obj: any, isRoot: boolean = true): string | null {
+  let result = null;
+  for (const key in obj) {
+    // Nested keys
+    if (typeof obj[key] === 'object' && obj.hasOwnProperty(key)) {
+      result = checkNestedKeys(obj[key], false);
+    } else {
+      result = ensureKeyIsValid(key, isRoot);
+    }
+    if (result !== null) {
+      break;
+    }
+  }
+
+  return result;
+}
 
 export type EnvironmentInfo = {
   object: Object,
@@ -70,13 +92,11 @@ class EnvironmentEditor extends React.PureComponent<Props, State> {
     }
 
     // Check for invalid key names
-    // TODO: these only check root properties, not nested properties
     if (value && value.object) {
-      for (const key of Object.keys(value.object)) {
-        error = ensureKeyIsValid(key);
-        if (error) {
-          break;
-        }
+      // Check root and nested properties
+      const err = checkNestedKeys(value.object);
+      if (err) {
+        error = err;
       }
     }
 

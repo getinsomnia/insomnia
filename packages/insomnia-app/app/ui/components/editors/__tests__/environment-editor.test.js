@@ -1,9 +1,10 @@
 // @flow
 import { ensureKeyIsValid } from '../environment-editor';
 import { NUNJUCKS_TEMPLATE_GLOBAL_PROPERTY_NAME } from '../../../../templating';
+const name = NUNJUCKS_TEMPLATE_GLOBAL_PROPERTY_NAME;
 
-describe('ensureKeyIsValid', () => {
-  it.each(['$', '$a', '$ab'])('%s should be invalid when as key begins with $', key => {
+describe('ensureNestedKeyIsValid', () => {
+  it.each(['$', '$a', '$ab'])('%s should be invalid when key begins with $', key => {
     expect(ensureKeyIsValid(key)).toBe(`"${key}" cannot begin with '$' or contain a '.'`);
   });
 
@@ -15,13 +16,17 @@ describe('ensureKeyIsValid', () => {
     expect(ensureKeyIsValid(key)).toBe(`"${key}" cannot begin with '$' or contain a '.'`);
   });
 
-  const name = NUNJUCKS_TEMPLATE_GLOBAL_PROPERTY_NAME;
-
-  it(`${name} as a key should be invalid`, () => {
-    expect(ensureKeyIsValid(name)).toBe(`"${name}" is a reserved key`);
-  });
-
   it.each(['a', 'ab', 'a$', 'a$b', 'a-b', `a${name}b`, `${name}ab`])('%s should be valid', key => {
     expect(ensureKeyIsValid(key)).toBe(null);
+  });
+});
+
+describe('ensureRootKeyIsValid', () => {
+  it.each(['_'])('%s should be invalid when key is _', key => {
+    expect(ensureKeyIsValid(key, true)).toBe(`"${key}" is a reserved key`);
+  });
+
+  it.each(['a', 'ab', 'a$', 'a$b', 'a-b', `a b`])('%s should be valid', key => {
+    expect(ensureKeyIsValid(key, true)).toBe(null);
   });
 });

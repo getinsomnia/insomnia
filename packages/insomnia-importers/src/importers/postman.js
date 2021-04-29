@@ -125,6 +125,8 @@ function importBody(body, schema) {
   } else if (body.mode === 'formdata') {
     // TODO: Handle this as properly as multipart/form-data
     return importBodyFormdata(body.formdata, schema);
+  } else if (body.mode === 'graphql') {
+    return importBodyGraphQL(body.graphql);
   } else {
     return {};
   }
@@ -191,6 +193,16 @@ function importBodyRaw(raw) {
   };
 }
 
+function importBodyGraphQL(graphql) {
+  if (!graphql) {
+    return {};
+  }
+
+  return {
+    mimeType: 'application/graphql',
+    text: JSON.stringify(graphql),
+  };
+}
 function mapImporter(arr, importFn) {
   if (!arr) {
     return [];

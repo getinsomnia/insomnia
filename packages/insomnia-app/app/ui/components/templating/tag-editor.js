@@ -79,6 +79,13 @@ class TagEditor extends React.PureComponent<Props, State> {
       activeTagData.rawValue = this.props.defaultValue;
     }
 
+    // Fix strings: arg.value expects an escaped value (based on _updateArg logic)
+    for (const arg of activeTagData.args) {
+      if (typeof arg.value === 'string') {
+        arg.value = this._escapeStringArgs(arg.value);
+      }
+    }
+
     await Promise.all([
       this._refreshModels(this.props.workspace),
       this._update(tagDefinitions, activeTagDefinition, activeTagData, true),
@@ -170,7 +177,7 @@ class TagEditor extends React.PureComponent<Props, State> {
 
     // Fix strings
     if (typeof argValue === 'string') {
-      argValue = argValue.replace(/\\/g, '\\\\');
+      argValue = this._escapeStringArgs(argValue);
     }
 
     // Ensure all arguments exist
@@ -306,6 +313,14 @@ class TagEditor extends React.PureComponent<Props, State> {
     }, 100);
   }
 
+  _escapeStringArgs(value: string) {
+    return value.replace(/\\/g, '\\\\');
+  }
+
+  _unescapeStringArgs(value: string) {
+    return value.replace(/\\\\/g, '\\');
+  }
+
   static _getDefaultTagData(tagDefinition: NunjucksParsedTag): NunjucksParsedTag {
     const defaultFill: string = templateUtils.getDefaultFill(
       tagDefinition.name,
@@ -405,7 +420,7 @@ class TagEditor extends React.PureComponent<Props, State> {
     return (
       <input
         type="text"
-        defaultValue={value || ''}
+        defaultValue={this._unescapeStringArgs(value) || ''}
         placeholder={placeholder}
         onChange={this._handleChange}
         data-encoding={encoding || 'utf8'}
@@ -440,7 +455,7 @@ class TagEditor extends React.PureComponent<Props, State> {
         showFileName
         className="btn btn--clicky btn--super-compact"
         onChange={path => this._handleChangeFile(path, argIndex)}
-        path={value}
+        path={this._unescapeStringArgs(value)}
         itemtypes={itemTypes}
         extensions={extensions}
       />

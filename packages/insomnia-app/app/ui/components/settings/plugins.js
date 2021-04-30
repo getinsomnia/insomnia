@@ -205,6 +205,9 @@ class Plugins extends React.PureComponent<Props, State> {
     const base = /^insomnia-plugin-/.test(name) ? PLUGIN_HUB_BASE : NPM_PACKAGE_BASE;
     const link = path.join(base, name);
 
+    // Don't render link to doc when has not modules.
+    if (Object.keys(plugin.module).length === 0) return null;
+
     return (
       <a className="space-left" href={link} title={link}>
         <i className="fa fa-external-link-square" />

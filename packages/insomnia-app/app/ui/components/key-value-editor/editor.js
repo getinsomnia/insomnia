@@ -28,21 +28,13 @@ class Editor extends PureComponent {
     this._focusedPairId = null;
     this._focusedField = NAME;
     this._rows = [];
-
-    // Migrate and add IDs to all pairs (pairs didn't used to have IDs)
-    const pairs = [...props.pairs];
-    for (const pair of pairs) {
-      if (props.maxPairs !== 1 && !pair.id) {
-        pair.id = generateId('pair');
-      }
-    }
-
     this.state = {
-      pairs: pairs,
+      pairs: [],
 
       // If any pair has a description, display description field
       displayDescription: props.pairs.some(p => p.description),
     };
+    this._ensureID();
   }
 
   _setRowRef(n) {
@@ -228,6 +220,28 @@ class Editor extends PureComponent {
     this._onChange(pairs);
   }
 
+  _ensureID() {
+    const pairs = [...this.props.pairs];
+    const prevPairs = [...this.state.pairs];
+    const index = [];
+    // Migrate and add IDs to all pairs (pairs didn't used to have IDs)
+    for (const pair of pairs) {
+      if (this.props.maxPairs !== 1 && !pair.id) {
+        pair.id = generateId('pair');
+        index.push(pair);
+      }
+    }
+    if (index.length !== 0) {
+      // Control the number of re-renders necessary
+      for (const pair of index) {
+        prevPairs.push(pair);
+      }
+      this.setState({
+        pairs: prevPairs,
+      });
+    }
+  }
+
   _focusNext(addIfValue = false) {
     if (this.props.maxPairs === 1) {
       return;
@@ -349,8 +363,17 @@ class Editor extends PureComponent {
     this.setState({ displayDescription: !this.state.displayDescription });
   }
 
+  static getDerivedStateFromProps(props, state) {
+    if (props.pairs !== state.pairs) {
+      return {
+        pairs: props.pairs,
+      };
+    }
+  }
+
   componentDidUpdate() {
     this._updateFocus();
+    this._ensureID();
   }
 
   render() {

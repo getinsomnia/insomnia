@@ -19,6 +19,14 @@ export type PluginConfigMap = {
   [string]: PluginConfig,
 };
 
+export const CertificateBundleType = {
+  default: 'default',
+  windowsCertStore: 'windows-cert-store',
+  userProvided: 'user-provided',
+};
+
+export type CertificateBundleTypeKeys = $Values<CertificateBundleType>;
+
 type BaseSettings = {
   autoHideMenuBar: boolean,
   autocompleteDelay: number,
@@ -64,6 +72,8 @@ type BaseSettings = {
   useBulkHeaderEditor: boolean,
   useBulkParametersEditor: boolean,
   validateSSL: boolean,
+  caBundleType: CertificateBundleTypeKeys,
+  caBundlePath: string,
   hasPromptedToMigrateFromDesigner: boolean,
   hasPromptedOnboarding: boolean,
   hasPromptedAnalytics: boolean,
@@ -123,6 +133,8 @@ export function init(): BaseSettings {
     useBulkHeaderEditor: false,
     useBulkParametersEditor: false,
     validateSSL: true,
+    caBundleType: CertificateBundleType.default,
+    caBundlePath: '',
 
     hasPromptedToMigrateFromDesigner: false,
 

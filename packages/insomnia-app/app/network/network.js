@@ -36,6 +36,7 @@ import {
   getTempDir,
   HttpVersions,
   STATUS_CODE_PLUGIN_ERROR,
+  isWindows,
 } from '../common/constants';
 import {
   delay,
@@ -61,6 +62,7 @@ import {
 import fs from 'fs';
 import * as db from '../common/database';
 import CACerts from './ca-certs';
+import winCa from 'win-ca/api';
 import * as plugins from '../plugins/index';
 import * as pluginContexts from '../plugins/context/index';
 import { getAuthHeader } from './authentication';
@@ -68,7 +70,7 @@ import { cookiesFromJar, jarFromCookies } from 'insomnia-cookies';
 import { urlMatchesCertHost } from './url-matches-cert-host';
 import aws4 from 'aws4';
 import { buildMultipart } from './multipart';
-import type { Environment } from '../models/environment';
+import { CertificateBundleType } from '../models/settings';
 
 export type ResponsePatch = {|
   bodyCompression?: 'zip' | null,
@@ -139,7 +141,7 @@ export async function _actuallySend(
   settings: Settings,
   environment: Environment | null,
 ): Promise<ResponsePatch> {
-  return new Promise(async resolve => {
+  return new Promise(async (resolve, reject) => {
     const timeline: Array<ResponseTimelineEntry> = [];
 
     function addTimeline(name, value) {
@@ -417,20 +419,60 @@ export async function _actuallySend(
         addTimelineText('Disable SSL validation');
       }
 
-      // Setup CA Root Certificates
-      const baseCAPath = getTempDir();
-      const fullCAPath = pathJoin(baseCAPath, 'ca-certs.pem');
+      // Setup Certifcate Authority
+      if (settings.caBundleType === CertificateBundleType.windowsCertStore && isWindows()) {
+        const baseCAPath = getTempDir();
+        const fullCAPath = pathJoin(baseCAPath, 'windows.pem');
+        let caFile = '';
 
-      try {
-        fs.statSync(fullCAPath);
-      } catch (err) {
-        // Doesn't exist yet, so write it
-        mkdirp.sync(baseCAPath);
-        fs.writeFileSync(fullCAPath, CACerts);
-        console.log('[net] Set CA to', fullCAPath);
+        await new Promise(resolve => {
+          winCa({
+            format: winCa.der2.pem,
+            store: ['root'],
+            save: fullCAPath,
+            onsave: folder => {
+              if (!folder) {
+                console.log(
+                  '[net] Failed to save CA from Windows Certificates to folder ',
+                  folder,
+                  '. CA information for this request has not been set.',
+                );
+              } else {
+                caFile = folder + '/roots.pem';
+                console.log(
+                  '[net] Saved CA from Windows Certificates to folder ',
+                  folder,
+                  ' and set CA file to ',
+                  caFile,
+                );
+              }
+              resolve();
+            },
+          });
+        });
+
+        if (caFile) {
+          setOpt(Curl.option.CAINFO, caFile);
+        }
+      } else if (settings.caBundleType === CertificateBundleType.userProvided) {
+        setOpt(Curl.option.CAINFO, settings.caBundlePath);
+        console.log('[net] Set CA to user provided file ', settings.caBundlePath);
+      } else {
+        // Setup CA Root Certificates
+        const baseCAPath = getTempDir();
+        const fullCAPath = pathJoin(baseCAPath, 'ca-certs.pem');
+
+        try {
+          fs.statSync(fullCAPath);
+        } catch (err) {
+          // Doesn't exist yet, so write it
+          mkdirp.sync(baseCAPath);
+          fs.writeFileSync(fullCAPath, CACerts);
+          console.log('[net] Set CA to', fullCAPath);
+        }
+
+        setOpt(Curl.option.CAINFO, fullCAPath);
       }
-
-      setOpt(Curl.option.CAINFO, fullCAPath);
 
       // Set cookies from jar
       if (renderedRequest.settingSendCookies) {

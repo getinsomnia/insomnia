@@ -12,6 +12,7 @@ import {
   EDITOR_KEY_MAP_VIM,
   HttpVersions,
   isDevelopment,
+  isWindows,
   isMac,
   updatesSupported,
   UPDATE_CHANNEL_BETA,
@@ -27,6 +28,8 @@ import type { GlobalActivity, HttpVersion } from '../../../common/constants';
 import type { Settings } from '../../../models/settings';
 import { setFont } from '../../../plugins/misc';
 import Tooltip from '../tooltip';
+import FileInputButton from '../base/file-input-button';
+import { CertificateBundleType } from '../../../models/settings';
 import CheckForUpdatesButton from '../check-for-updates-button';
 import { initNewOAuthSession } from '../../../network/o-auth-2/misc';
 import { bindActionCreators } from 'redux';
@@ -99,6 +102,10 @@ class General extends React.PureComponent<Props, State> {
     }
 
     return this.props.updateSetting(el.name, value);
+  }
+
+  async _handleCaBundlePathChange(path: string) {
+    return this.props.updateSetting('caBundlePath', path);
   }
 
   async _handleUpdateSettingAndRestart(e: SyntheticEvent<HTMLInputElement>) {
@@ -204,6 +211,52 @@ class General extends React.PureComponent<Props, State> {
       ...props,
       type: 'number',
     });
+  }
+
+  renderCertificateBundleSettings() {
+    const { settings } = this.props;
+
+    const defaultOption = (
+      <option value={CertificateBundleType.default}>-- System Default --</option>
+    );
+    const windowsOption = (
+      <option value={CertificateBundleType.windowsCertStore}>Windows Certificate Store</option>
+    );
+    const userOption = <option value={CertificateBundleType.userProvided}>Custom Bundle</option>;
+
+    const disabled = !settings.validateSSL;
+    return (
+      <React.Fragment>
+        {this.renderBooleanSetting('Validate certificates', 'validateSSL', '')}
+        <div className="form-row pad-top-sm">
+          <div className="form-control form-control--outlined">
+            <label>Certificate Bundle</label>
+            <select
+              name="caBundleType"
+              value={settings.caBundleType}
+              disabled={disabled}
+              onChange={this._handleUpdateSetting}>
+              {defaultOption}
+              {isWindows() ? windowsOption : null}
+              {userOption}
+            </select>
+          </div>
+          {settings.caBundleType === CertificateBundleType.userProvided && (
+            <div className="form-control form-control--outlined">
+              <label>Custom Bundle</label>
+              <FileInputButton
+                className="btn btn--clicky"
+                name="CA Bundle"
+                onChange={this._handleCaBundlePathChange}
+                path={settings.caBundlePath}
+                showFileName
+                disabled={disabled}
+              />
+            </div>
+          )}
+        </div>
+      </React.Fragment>
+    );
   }
 
   render() {
@@ -349,10 +402,8 @@ class General extends React.PureComponent<Props, State> {
         <hr className="pad-top" />
 
         <h2>Request / Response</h2>
-
         <div className="row-fill row-fill--top">
           <div>
-            {this.renderBooleanSetting('Validate certificates', 'validateSSL', '')}
             {this.renderBooleanSetting('Follow redirects', 'followRedirects', '')}
             {this.renderBooleanSetting(
               'Filter responses by environment',
@@ -411,6 +462,10 @@ class General extends React.PureComponent<Props, State> {
             { min: 0 },
           )}
         </div>
+
+        <h3>Certificates</h3>
+
+        {this.renderCertificateBundleSettings()}
 
         <hr className="pad-top" />
 

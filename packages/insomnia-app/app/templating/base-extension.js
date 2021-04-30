@@ -32,7 +32,7 @@ export default class BaseExtension {
   getLiveDisplayName() {
     return (
       this._ext.liveDisplayName ||
-      function(args) {
+      function() {
         return '';
       }
     );

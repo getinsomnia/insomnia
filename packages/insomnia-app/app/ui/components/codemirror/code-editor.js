@@ -952,6 +952,7 @@ class CodeEditor extends React.Component {
       type,
       isVariableUncovered,
       raw,
+      defaultValue,
     } = this.props;
 
     const classes = classnames(className, {
@@ -1048,7 +1049,7 @@ class CodeEditor extends React.Component {
             autoComplete="off"
             // NOTE: When setting this to empty string, it breaks the _ignoreNextChange
             //   logic on initial component mount
-            defaultValue=" "
+            defaultValue={defaultValue || ' '}
           />
         </div>
         {toolbar}

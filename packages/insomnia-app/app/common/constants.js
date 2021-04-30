@@ -182,6 +182,17 @@ export const MIN_INTERFACE_FONT_SIZE = 8;
 export const MAX_INTERFACE_FONT_SIZE = 24;
 export const MIN_EDITOR_FONT_SIZE = 8;
 export const MAX_EDITOR_FONT_SIZE = 24;
+export const EDITOR_FONT_WEITGHTS = {
+  Thin: 100,
+  UltraLight: 200,
+  Light: 300,
+  Normal: 400,
+  Medium: 500,
+  SemiBold: 600,
+  Bold: 700,
+  ExtraBold: 800,
+  Heavy: 900,
+};
 
 // Activities
 export type GlobalActivity =

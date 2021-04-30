@@ -20,6 +20,7 @@ import {
   MAX_INTERFACE_FONT_SIZE,
   MIN_EDITOR_FONT_SIZE,
   MAX_EDITOR_FONT_SIZE,
+  EDITOR_FONT_WEITGHTS,
 } from '../../../common/constants';
 import HelpTooltip from '../help-tooltip';
 import type { GlobalActivity, HttpVersion } from '../../../common/constants';
@@ -34,10 +35,22 @@ import * as globalActions from '../../redux/modules/global';
 import { connect } from 'react-redux';
 import { stringsPlural } from '../../../common/strings';
 import { snapNumberToLimits } from '../../../common/misc';
+import { ascendingNumberSort } from '../../../common/sorting';
 
 // Font family regex to match certain monospace fonts that don't get
 // recognized as monospace
 const FORCED_MONO_FONT_REGEX = /^fixedsys /i;
+
+// Function to remove duplicates form fonts array
+const REMOVE_DUPLICATES = (acc, current) => {
+  const item = acc.find(font => font.family === current.family);
+
+  if (!item) {
+    return acc.concat([current]);
+  } else {
+    return acc;
+  }
+};
 
 type Props = {
   settings: Settings,
@@ -51,6 +64,7 @@ type Props = {
 type State = {
   fonts: Array<{ family: string, monospace: boolean }> | null,
   fontsMono: Array<{ family: string, monospace: boolean }> | null,
+  editorFontWeights: Array<number>,
 };
 
 @autoBindMethodsForReact(AUTOBIND_CFG)
@@ -60,6 +74,7 @@ class General extends React.PureComponent<Props, State> {
     this.state = {
       fonts: null,
       fontsMono: null,
+      editorFontWeights: null,
     };
   }
 
@@ -71,14 +86,21 @@ class General extends React.PureComponent<Props, State> {
       .filter(i => ['regular', 'book'].includes(i.style.toLowerCase()) && !i.italic)
       .sort((a, b) => (a.family > b.family ? 1 : -1));
 
-    // Find monospaced fonts
+    // Find monospaced fonts with installed weights for each font family
     // NOTE: Also include some others:
     //  - https://github.com/Kong/insomnia/issues/1835
-    const fontsMono = fonts.filter(i => i.monospace || i.family.match(FORCED_MONO_FONT_REGEX));
+    const fontsMono = allFonts
+      .filter(i => (!i.italic && i.monospace) || i.family.match(FORCED_MONO_FONT_REGEX))
+      .reduce(REMOVE_DUPLICATES, [])
+      .sort((a, b) => (a.family > b.family ? 1 : -1));
+
+    const currentMonospaceFont = this.props.settings.fontMonospace || '__NULL__';
+    const editorFontWeights = this._getWeightsForFont(currentMonospaceFont);
 
     this.setState({
       fonts,
       fontsMono,
+      editorFontWeights,
     });
   }
 
@@ -108,14 +130,37 @@ class General extends React.PureComponent<Props, State> {
     app.exit();
   }
 
-  async _handleFontSizeChange(el: SyntheticEvent<HTMLInputElement>) {
-    const settings = await this._handleUpdateSetting(el);
+  _getWeightsForFont(fontFamily: string): Array<number> {
+    if (fontFamily === '__NULL__') {
+      return Object.values(EDITOR_FONT_WEITGHTS);
+    } else {
+      const weightSet = new Set();
 
-    setFont(settings);
+      const fonts = fontScanner.findFontsSync({ family: fontFamily });
+      fonts.forEach(({ weight }) => {
+        weightSet.add(weight);
+      });
+
+      return [...weightSet].sort(ascendingNumberSort);
+    }
+  }
+
+  _renderFontWeightSetting(fontFamily: string) {
+    const weights = this._getWeightsForFont(fontFamily);
+
+    this.setState({
+      editorFontWeights: weights,
+    });
   }
 
   async _handleFontChange(el: SyntheticEvent<HTMLInputElement>) {
+    const currentTarget = { name: el.currentTarget.name, value: el.currentTarget.value };
     const settings = await this._handleUpdateSetting(el);
+
+    if (currentTarget.name === 'fontMonospace') {
+      this._renderFontWeightSetting(currentTarget.value);
+    }
+
     setFont(settings);
   }
 
@@ -208,7 +253,7 @@ class General extends React.PureComponent<Props, State> {
 
   render() {
     const { settings } = this.props;
-    const { fonts, fontsMono } = this.state;
+    const { fonts, fontsMono, editorFontWeights } = this.state;
     return (
       <div className="pad-bottom">
         <div className="row-fill row-fill--top">
@@ -292,7 +337,7 @@ class General extends React.PureComponent<Props, State> {
           {this.renderNumberSetting('Interface Font Size (px)', 'fontSize', '', {
             min: MIN_INTERFACE_FONT_SIZE,
             max: MAX_INTERFACE_FONT_SIZE,
-            onBlur: this._handleFontSizeChange,
+            onBlur: this._handleFontChange,
           })}
         </div>
 
@@ -326,10 +371,36 @@ class General extends React.PureComponent<Props, State> {
         </div>
 
         <div className="form-row">
+          <div className="form-control form-control--outlined">
+            <label>
+              Editor Font Weight
+              {fontsMono ? (
+                <select
+                  name="fontMonospaceWeight"
+                  value={settings.fontMonospaceWeight}
+                  onChange={this._handleFontChange}>
+                  {editorFontWeights.map(item => (
+                    <option key={item} value={item}>
+                      {Object.keys(EDITOR_FONT_WEITGHTS).find(
+                        key => EDITOR_FONT_WEITGHTS[key] === item,
+                      )}
+                    </option>
+                  ))}
+                </select>
+              ) : (
+                <select disabled>
+                  <option value="__NULL__">-- Unsupported Platform --</option>
+                </select>
+              )}
+            </label>
+          </div>
           {this.renderNumberSetting('Editor Indent Size', 'editorIndentSize', '', {
             min: 1,
             max: 16,
           })}
+        </div>
+
+        <div className="form-row">
           <div className="form-control form-control--outlined">
             <label>
               Text Editor Key Map

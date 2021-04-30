@@ -586,6 +586,10 @@ export function exportWorkspacesToFile(workspaceId = null) {
             console.warn('Export failed', err);
           }
           dispatch(loadStop());
+          showModal(AlertModal, {
+            title: 'Success',
+            message: 'requests under all workspaces was exported successfully',
+          });
         });
       },
     );
@@ -675,6 +679,10 @@ export function exportRequestsToFile(requestIds) {
             console.warn('Export failed', err);
           }
           dispatch(loadStop());
+          showModal(AlertModal, {
+            title: 'Success',
+            message: 'requests under current workspace was exported successfully',
+          });
         });
       },
     );

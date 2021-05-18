@@ -1,12 +1,15 @@
-import React, { PureComponent } from 'react';
 import { autoBindMethodsForReact } from 'class-autobind-decorator';
-import { AUTOBIND_CFG } from '../../../common/constants';
-import GraphQLExplorerField from './graph-ql-explorer-field';
-import GraphQLExplorerType from './graph-ql-explorer-type';
 import type { GraphQLArgument, GraphQLField, GraphQLSchema, GraphQLType } from 'graphql';
 import { GraphQLEnumType } from 'graphql';
-import GraphQLExplorerSchema from './graph-ql-explorer-schema';
+import React, { PureComponent } from 'react';
+import { AUTOBIND_CFG } from '../../../common/constants';
+import { hotKeyRefs } from '../../../common/hotkeys';
+import { executeHotKey } from '../../../common/hotkeys-listener';
+import KeydownBinder from '../keydown-binder';
 import GraphQLExplorerEnum from './graph-ql-explorer-enum';
+import GraphQLExplorerField from './graph-ql-explorer-field';
+import GraphQLExplorerSchema from './graph-ql-explorer-schema';
+import GraphQLExplorerType from './graph-ql-explorer-type';
 
 interface Props {
   handleClose: () => void;
@@ -26,6 +29,7 @@ interface HistoryItem {
 
 interface State extends HistoryItem {
   history: Array<HistoryItem>;
+  filter: string;
 }
 
 @autoBindMethodsForReact(AUTOBIND_CFG)
@@ -34,6 +38,31 @@ class GraphQLExplorer extends PureComponent<Props, State> {
     history: [],
     currentType: null,
     currentField: null,
+    filter: '',
+  };
+
+  _inputRef: React.RefObject<HTMLInputElement> = React.createRef();
+
+  _handleKeydown(e: KeyboardEvent) {
+    executeHotKey(e, hotKeyRefs.GRAPHQL_EXPLORER_FOCUS_FILTER, () => {
+      this._navigateToSchema();
+      this._focus_and_select_filter_input();
+    });
+  }
+
+  _focus_and_select_filter_input() {
+    if (this._inputRef.current) {
+      this._inputRef.current.focus();
+      this._inputRef.current.select();
+    }
+  }
+
+  _navigateToSchema() {
+    this.setState({
+      currentType: null,
+      currentField: null,
+      history: this._addToHistory(),
+    });
   }
 
   _handleNavigateType(type: GraphQLType | GraphQLEnumType) {
@@ -89,7 +118,10 @@ class GraphQLExplorer extends PureComponent<Props, State> {
     const { type, field } = nextProps.reference;
     const { currentType, currentField } = this.state;
 
-    const compare = <T extends { name: string } | null, U extends { name: string } | null>(a: T, b: U) => (!a && !b) || (a && b && a.name === b.name);
+    const compare = <T extends { name: string } | null, U extends { name: string } | null>(
+      a: T,
+      b: U,
+    ) => (!a && !b) || (a && b && a.name === b.name);
 
     // @ts-expect-error -- needs generic for `name`
     const sameType = compare(currentType, type);
@@ -121,7 +153,8 @@ class GraphQLExplorer extends PureComponent<Props, State> {
             e.preventDefault();
 
             this._handlePopHistory();
-          }}>
+          }}
+        >
           <i className="fa--skinny fa fa-angle-left" /> Schema
         </a>
       );
@@ -149,9 +182,31 @@ class GraphQLExplorer extends PureComponent<Props, State> {
           e.preventDefault();
 
           this._handlePopHistory();
-        }}>
+        }}
+      >
         <i className="fa--skinny fa fa-angle-left" /> {name}
       </a>
+    );
+  }
+
+  renderSearchInput() {
+    return (
+      <div className="graphql-explorer__search">
+        <div className="form-control form-control--outlined form-control--btn-right">
+          <input
+            ref={this._inputRef}
+            type="text"
+            placeholder="Search the docs..."
+            value={this.state.filter}
+            onChange={ev => this.setState({ filter: ev.target.value })}
+          />
+          {this.state.filter && (
+            <button className="form-control__right" onClick={() => this.setState({ filter: '' })}>
+              <i className="fa fa-times-circle" />
+            </button>
+          )}
+        </div>
+      </div>
     );
   }
 
@@ -181,7 +236,17 @@ class GraphQLExplorer extends PureComponent<Props, State> {
         />
       );
     } else if (schema) {
-      child = <GraphQLExplorerSchema onNavigateType={this._handleNavigateType} schema={schema} />;
+      child = (
+        <>
+          {this.renderSearchInput()}
+          <GraphQLExplorerSchema
+            onNavigateType={this._handleNavigateType}
+            onNavigateField={this._handleNavigateField}
+            schema={schema}
+            filter={this.state.filter}
+          />
+        </>
+      );
     }
 
     if (!child) {
@@ -193,18 +258,21 @@ class GraphQLExplorer extends PureComponent<Props, State> {
     const typeName = currentType ? currentType.name : null;
     const schemaName = schema ? 'Schema' : null;
     return (
-      <div className="graphql-explorer theme--dialog">
-        <div className="graphql-explorer__header">
-          {this.renderHistoryItem()}
-          <h1>{fieldName || typeName || schemaName || 'Unknown'}</h1>
-          <button
-            className="btn btn--compact graphql-explorer__header__close-btn"
-            onClick={handleClose}>
-            <i className="fa fa-close" />
-          </button>
+      <KeydownBinder onKeydown={this._handleKeydown}>
+        <div className="graphql-explorer theme--dialog">
+          <div className="graphql-explorer__header">
+            {this.renderHistoryItem()}
+            <h1>{fieldName || typeName || schemaName || 'Unknown'}</h1>
+            <button
+              className="btn btn--compact graphql-explorer__header__close-btn"
+              onClick={handleClose}
+            >
+              <i className="fa fa-close" />
+            </button>
+          </div>
+          <div className="graphql-explorer__body">{child}</div>
         </div>
-        <div className="graphql-explorer__body">{child}</div>
-      </div>
+      </KeydownBinder>
     );
   }
 }

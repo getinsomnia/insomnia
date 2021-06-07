@@ -12,6 +12,7 @@ import { getDefaultAppName } from '../util';
 import { getAppDataDir } from '../data-directory';
 import { logger } from '../logger';
 import path from 'path';
+import insomniaAdapter from './adapters/insomnia-adapter';
 
 export interface Database {
   ApiSpec: ApiSpec[];
@@ -42,12 +43,14 @@ interface Options {
   workingDir?: string;
   appDataDir?: string;
   filterTypes?: (keyof Database)[];
+  src?: string;
 }
 
 export const loadDb = async ({
   workingDir,
   appDataDir,
   filterTypes,
+  src,
 }: Options = {}) => {
   let db: Database | null = null;
 
@@ -56,8 +59,15 @@ export const loadDb = async ({
     const dir = workingDir || '.';
     db = await gitAdapter(dir, filterTypes);
     db && logger.debug(`Data store configured from git repository at \`${path.resolve(dir)}\``);
-  } // try load from nedb
+  }
 
+  // try load from file (higher priority)
+  if (src) {
+    db = await insomniaAdapter(src, filterTypes);
+    db && logger.debug(`Data store configured from file at \`${path.resolve(src)}\``);
+  }
+
+  // try load from nedb
   if (!db) {
     const dir = appDataDir || getAppDataDir(getDefaultAppName());
     db = await neDbAdapter(dir, filterTypes);
@@ -75,9 +85,15 @@ export const loadDb = async ({
     }
   } // return empty db
 
+  appDataDir &&
+  logger.warn(
+    'The option --app-data-dir has been deprecated and will be removed in future releases.\n' +
+    'Please, consider using --src as alternative',
+  );
+
   if (!db) {
     logger.warn(
-      'No git or app data store found, re-run `inso` with `--verbose` to see tracing information',
+      'No git, app data store or Insomnia V4 export file found, re-run `inso` with `--verbose` to see tracing information',
     );
     db = emptyDb();
   }

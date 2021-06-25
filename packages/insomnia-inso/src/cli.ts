@@ -1,6 +1,6 @@
 import { ConversionOption, conversionOptions, generateConfig } from './commands/generate-config';
 import { getVersion, logErrorExit1, exit } from './util';
-import { reporterTypes, runInsomniaTests, TestReporter } from './commands/run-tests';
+import { runInsomniaTests, TestReporter } from './commands/run-tests';
 import { lintSpecification } from './commands/lint-specification';
 import { exportSpecification } from './commands/export-specification';
 import { parseArgsStringToArgv } from 'string-argv';
@@ -57,10 +57,8 @@ const makeTestCommand = (commandCreator: CreateCommand) => {
     .description('Run Insomnia unit test suites')
     .option('-e, --env <identifier>', 'environment to use')
     .option('-t, --testNamePattern <regex>', 'run tests that match the regex')
-    .option(
-      '-r, --reporter <reporter>',
-      `reporter to use, options are [${reporterTypes.join(', ')}] (default: ${defaultReporter})`,
-    )
+    .option('-r, --reporter <reporter>', `specify report to use (default: ${defaultReporter})`)
+    .option('-ro, --reporterOptions <option> [options...]', 'reporter-specific options')
     .option('-b, --bail', 'abort ("bail") after first test failure')
     .option('--keepFile', 'do not delete the generated test file')
     .action((identifier, cmd) => {

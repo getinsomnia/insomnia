@@ -11,13 +11,12 @@ import {
 import Dropdown, { DropdownProps } from '../base/dropdown/dropdown';
 import { hotKeyRefs } from '../../../common/hotkeys';
 import * as misc from '../../../common/misc';
-import { isRequest } from '../../../models/helpers/is-model';
 import * as requestOperations from '../../../models/helpers/request-operations';
 import { incrementDeletedRequests } from '../../../models/stats';
 // Plugin action related imports
 import type { RequestAction } from '../../../plugins';
 import type { HotKeyRegistry } from '../../../common/hotkeys';
-import type { Request } from '../../../models/request';
+import { isRequest, Request } from '../../../models/request';
 import type { RequestGroup } from '../../../models/request-group';
 import type { Environment } from '../../../models/environment';
 import { getRequestActions } from '../../../plugins';
@@ -105,7 +104,7 @@ class RequestActionsDropdown extends PureComponent<Props, State> {
       const activeEnvironmentId = activeEnvironment ? activeEnvironment._id : null;
       const context = {
         ...(pluginContexts.app.init(RENDER_PURPOSE_NO_RENDER) as Record<string, any>),
-        ...(pluginContexts.data.init() as Record<string, any>),
+        ...pluginContexts.data.init(),
         ...(pluginContexts.store.init(p.plugin) as Record<string, any>),
         ...(pluginContexts.network.init(activeEnvironmentId) as Record<string, any>),
       };

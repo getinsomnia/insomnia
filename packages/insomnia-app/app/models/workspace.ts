@@ -3,42 +3,52 @@ import * as models from './index';
 import { database as db } from '../common/database';
 import { getAppName } from '../common/constants';
 import { strings } from '../common/strings';
-import { ValueOf } from 'type-fest';
-import { isSpaceId } from './helpers/is-model';
+import { Merge } from 'type-fest';
+import { isSpaceId } from './space';
 
 export const name = 'Workspace';
-
 export const type = 'Workspace';
-
 export const prefix = 'wrk';
-
 export const canDuplicate = true;
-
 export const canSync = true;
+
+interface GenericWorkspace<Scope extends 'design' | 'collection'> {
+  name: string;
+  description: string;
+  certificates?: any;
+  scope: Scope;
+}
+
+export type DesignWorkspace = GenericWorkspace<'design'>;
+export type CollectionWorkspace = GenericWorkspace<'collection'>;
+export type BaseWorkspace = DesignWorkspace | CollectionWorkspace;
+
+export type WorkspaceScope = BaseWorkspace['scope'];
 
 export const WorkspaceScopeKeys = {
   design: 'design',
   collection: 'collection',
 } as const;
 
-export type WorkspaceScope = ValueOf<typeof WorkspaceScopeKeys>;
-
-interface BaseWorkspace {
-  name: string;
-  description: string;
-  scope: WorkspaceScope;
-  certificates?: any;
-}
-
 export type Workspace = BaseModel & BaseWorkspace;
 
-export function init() {
-  return {
-    name: `New ${strings.collection.singular}`,
-    description: '',
-    scope: WorkspaceScopeKeys.collection,
-  };
-}
+export const isWorkspace = (model: Pick<BaseModel, 'type'>): model is Workspace => (
+  model.type === type
+);
+
+export const isDesign = (workspace: Pick<Workspace, 'scope'>): workspace is DesignWorkspace => (
+  workspace.scope === WorkspaceScopeKeys.design
+);
+
+export const isCollection = (workspace: Pick<Workspace, 'scope'>): workspace is CollectionWorkspace => (
+  workspace.scope === WorkspaceScopeKeys.collection
+);
+
+export const init = (): BaseWorkspace => ({
+  name: `New ${strings.collection.singular}`,
+  description: '',
+  scope: WorkspaceScopeKeys.collection,
+});
 
 export async function migrate(doc: Workspace) {
   doc = await _migrateExtractClientCertificates(doc);
@@ -60,18 +70,18 @@ export async function create(patch: Partial<Workspace> = {}) {
 }
 
 export async function all() {
-  const workspaces = await db.all<Workspace>(type) || [];
+  const workspaces = await db.all<Workspace>(type);
 
-  if (workspaces.length === 0) {
-    // Create default workspace
-    await create({
-      name: getAppName(),
-      scope: WorkspaceScopeKeys.collection,
-    });
-    return all();
-  } else {
+  if (workspaces.length > 0) {
     return workspaces;
   }
+
+  // Create default workspace
+  await create({
+    name: getAppName(),
+    scope: WorkspaceScopeKeys.collection,
+  });
+  return db.all<Workspace>(type);
 }
 
 export function count() {
@@ -127,30 +137,23 @@ async function _migrateEnsureName(workspace: Workspace) {
   return workspace;
 }
 
+// Translate the old value
+type OldScopeTypes = 'spec' | 'debug' | 'designer' | null;
+type MigrationWorkspace = Merge<Workspace, { scope: OldScopeTypes | Workspace['scope'] }>;
+
 /**
  * Ensure workspace scope is set to a valid entry
  */
-function _migrateScope(workspace: Workspace) {
-  if (
-    workspace.scope === WorkspaceScopeKeys.design ||
-    workspace.scope === WorkspaceScopeKeys.collection
-  ) {
-    return workspace;
-  }
+function _migrateScope(workspace: MigrationWorkspace) {
+  switch (workspace.scope) {
+    case WorkspaceScopeKeys.collection:
+    case WorkspaceScopeKeys.design:
+      break;
 
-  // Translate the old value
-  type OldScopeTypes = 'spec' | 'debug' | 'designer' | null;
-
-  switch (workspace.scope as OldScopeTypes) {
-    case 'spec': {
+    case 'designer':
+    case 'spec':
       workspace.scope = WorkspaceScopeKeys.design;
       break;
-    }
-
-    case 'designer': {
-      workspace.scope = WorkspaceScopeKeys.design;
-      break;
-    }
 
     case 'debug':
     case null:
@@ -158,8 +161,13 @@ function _migrateScope(workspace: Workspace) {
       workspace.scope = WorkspaceScopeKeys.collection;
       break;
   }
+  return workspace as Workspace;
+}
 
-  return workspace;
+export async function ensureChildren({ _id }: Workspace) {
+  await models.environment.getOrCreateForParentId(_id);
+  await models.cookieJar.getOrCreateForParentId(_id);
+  await models.workspaceMeta.getOrCreateByParentId(_id);
 }
 
 function expectParentToBeSpace(parentId?: string | null) {

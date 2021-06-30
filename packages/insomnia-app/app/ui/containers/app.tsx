@@ -25,15 +25,26 @@ import { parse as urlParse } from 'url';
 import HTTPSnippet from 'httpsnippet';
 import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
+import { Action, bindActionCreators, Dispatch } from 'redux';
 import Wrapper from '../components/wrapper';
 import WorkspaceEnvironmentsEditModal from '../components/modals/workspace-environments-edit-modal';
 import Toast from '../components/toast';
 import CookiesModal from '../components/modals/cookies-modal';
 import RequestSwitcherModal from '../components/modals/request-switcher-modal';
 import SettingsModal, { TAB_INDEX_SHORTCUTS } from '../components/modals/settings-modal';
-import * as globalActions from '../redux/modules/global';
-import * as entitiesActions from '../redux/modules/entities';
+import {
+  importUri,
+  loadRequestStart,
+  loadRequestStop,
+  newCommand,
+  setActiveWorkspace,
+  setActiveActivity,
+  goToNextActivity,
+  importFile,
+  importClipBoard,
+  exportRequestsToFile,
+} from '../redux/modules/global';
+import { initialize } from '../redux/modules/entities';
 import { database as db } from '../../common/database';
 import * as models from '../../models';
 import {
@@ -44,6 +55,7 @@ import {
   selectActiveRequestMeta,
   selectActiveRequestResponses,
   selectActiveResponse,
+  selectActiveSpace,
   selectActiveUnitTestResult,
   selectActiveUnitTests,
   selectActiveUnitTestSuite,
@@ -55,6 +67,7 @@ import {
   selectSyncItems,
   selectUnseenWorkspaces,
   selectWorkspaceRequestsAndRequestGroups,
+  selectWorkspacesForActiveSpace,
 } from '../redux/selectors';
 import { selectSidebarChildren } from '../redux/sidebar-selectors';
 import RequestCreateModal from '../components/modals/request-create-modal';
@@ -84,23 +97,15 @@ import * as templating from '../../templating/index';
 import { NUNJUCKS_TEMPLATE_GLOBAL_PROPERTY_NAME } from '../../templating/index';
 import AskModal from '../components/modals/ask-modal';
 import { Request, updateMimeType } from '../../models/request';
-import MoveRequestGroupModal from '../components/modals/move-request-group-modal';
 import * as themes from '../../plugins/misc';
-import ExportRequestsModal from '../components/modals/export-requests-modal';
 import FileSystemDriver from '../../sync/store/drivers/file-system-driver';
-import VCS from '../../sync/vcs';
+import { VCS } from '../../sync/vcs/vcs';
 import SyncMergeModal from '../components/modals/sync-merge-modal';
 import { GitVCS, GIT_CLONE_DIR, GIT_INSOMNIA_DIR, GIT_INTERNAL_DIR } from '../../sync/git/git-vcs';
 import { NeDBClient } from '../../sync/git/ne-db-client';
 import { fsClient } from '../../sync/git/fs-client';
 import { routableFSClient } from '../../sync/git/routable-fs-client';
 import { getWorkspaceLabel } from '../../common/get-workspace-label';
-import {
-  isCollection,
-  isGrpcRequest,
-  isGrpcRequestId,
-  isRequestGroup,
-} from '../../models/helpers/is-model';
 import * as requestOperations from '../../models/helpers/request-operations';
 import { GrpcProvider } from '../context/grpc';
 import { sortMethodMap } from '../../common/sorting';
@@ -109,12 +114,12 @@ import { trackSegmentEvent } from '../../common/analytics';
 import getWorkspaceName from '../../models/helpers/get-workspace-name';
 import * as workspaceOperations from '../../models/helpers/workspace-operations';
 import { Settings } from '../../models/settings';
-import { Workspace } from '../../models/workspace';
-import { GrpcRequest } from '../../models/grpc-request';
-import { Environment } from '../../models/environment';
+import { isCollection, isWorkspace, Workspace } from '../../models/workspace';
+import { GrpcRequest, isGrpcRequest, isGrpcRequestId } from '../../models/grpc-request';
+import { Environment, isEnvironment } from '../../models/environment';
 import { GrpcRequestMeta } from '../../models/grpc-request-meta';
 import { RequestMeta } from '../../models/request-meta';
-import { RequestGroup } from '../../models/request-group';
+import { isRequestGroup, RequestGroup } from '../../models/request-group';
 import { ApiSpec } from '../../models/api-spec';
 import { WorkspaceMeta } from '../../models/workspace-meta';
 import { GitRepository } from '../../models/git-repository';
@@ -122,33 +127,43 @@ import { CookieJar } from '../../models/cookie-jar';
 import { Response } from '../../models/response';
 import { RenderContextAndKeys } from '../../common/render';
 
-interface Props {
-  sidebarWidth: number,
-  paneWidth: number,
-  paneHeight: number,
-  handleCommand: Function,
-  settings: Settings,
-  isLoggedIn: boolean,
-  activeWorkspace: Workspace,
-  handleSetActiveActivity: Function,
-  handleGoToNextActivity: Function,
-  handleSetActiveWorkspace: Function,
-  activeRequest?: Request | GrpcRequest,
+interface OwnProps {
   activeApiSpec: ApiSpec,
-  activity: GlobalActivity,
-  activeEnvironment?: Environment,
-  isVariableUncovered: boolean,
-  sidebarHidden: boolean,
-  workspaces: Workspace[],
-  apiSpecs: ApiSpec[],
-  activeWorkspaceMeta: WorkspaceMeta,
-  activeGitRepository: GitRepository,
   activeCookieJar: CookieJar,
+  activeEnvironment?: Environment,
+  activeGitRepository: GitRepository,
+  activeRequest?: Request | GrpcRequest,
+  activeWorkspace: Workspace,
+  activeWorkspaceMeta: WorkspaceMeta,
+  activity: GlobalActivity,
+  apiSpecs: ApiSpec[],
   environments: Environment[],
-  handleStartLoading: Function,
-  handleStopLoading: Function
-  handleImportUriToWorkspace: Function,
+  isLoggedIn: boolean,
+  isVariableUncovered: boolean,
+  paneHeight: number,
+  paneWidth: number,
+  settings: Settings,
+  sidebarHidden: boolean,
+  sidebarWidth: number,
+  workspaces: Workspace[],
 }
+
+export interface ReduxDispatchProps {
+  handleCommand: Function;
+  handleImportUriToWorkspace: Function;
+  handleSetActiveWorkspace: Function;
+  handleStartLoading: Function;
+  handleStopLoading: Function;
+  handleMoveDoc: Function;
+  handleSetActiveActivity: Function;
+  handleGoToNextActivity: Function;
+  handleImportFileToWorkspace: Function;
+  handleImportClipBoardToWorkspace: Function;
+  handleExportRequestsToFile: Function;
+  handleInitializeEntities: Function;
+}
+
+type Props = OwnProps & ReduxDispatchProps;
 
 interface State {
   showDragOverlay: boolean,
@@ -484,12 +499,6 @@ class App extends PureComponent<Props, State> {
         });
         models.stats.incrementCreatedRequestsForDescendents(newRequestGroup);
       },
-    });
-  }
-
-  static async _requestGroupMove(requestGroup: RequestGroup) {
-    showModal(MoveRequestGroupModal, {
-      requestGroup,
     });
   }
 
@@ -1112,22 +1121,9 @@ class App extends PureComponent<Props, State> {
     }
   }
 
-  _handleToggleMenuBar(hide) {
-    for (const win of remote.BrowserWindow.getAllWindows()) {
-      if (win.autoHideMenuBar !== hide) {
-        win.setAutoHideMenuBar(hide);
-        win.setMenuBarVisibility(!hide);
-      }
-    }
-  }
-
   async _handleToggleSidebar() {
     const sidebarHidden = !this.props.sidebarHidden;
     await this._handleSetSidebarHidden(sidebarHidden);
-  }
-
-  _handleShowExportRequestsModal() {
-    showModal(ExportRequestsModal);
   }
 
   static _handleShowSettingsModal(tabIndex?: number) {
@@ -1322,7 +1318,7 @@ class App extends PureComponent<Props, State> {
 
       // Force refresh if environment changes
       // TODO: Only do this for environments in this workspace (not easy because they're nested)
-      if (doc.type === models.environment.type) {
+      if (isEnvironment(doc)) {
         console.log('[App] Forcing update from environment change', change);
         needsRefresh = true;
       }
@@ -1334,7 +1330,7 @@ class App extends PureComponent<Props, State> {
       }
 
       // Delete VCS project if workspace deleted
-      if (vcs && doc.type === models.workspace.type && type === db.CHANGE_REMOVE) {
+      if (vcs && isWorkspace(doc) && type === db.CHANGE_REMOVE) {
         await vcs.removeProjectsForRoot(doc._id);
       }
     }
@@ -1417,9 +1413,6 @@ class App extends PureComponent<Props, State> {
     );
     ipcRenderer.on('toggle-sidebar', this._handleToggleSidebar);
 
-    // handle this
-    this._handleToggleMenuBar(this.props.settings.autoHideMenuBar);
-
     // Give it a bit before letting the backend know it's ready
     setTimeout(() => ipcRenderer.send('window-ready'), 500);
     window
@@ -1461,9 +1454,7 @@ class App extends PureComponent<Props, State> {
       },
       async () => {
         const flushId = await db.bufferChanges();
-        await models.environment.getOrCreateForWorkspace(activeWorkspace);
-        await models.cookieJar.getOrCreateForParentId(activeWorkspace._id);
-        await models.workspaceMeta.getOrCreateByParentId(activeWorkspace._id);
+        await models.workspace.ensureChildren(activeWorkspace);
         await db.flushChanges(flushId);
         this.setState({
           isMigratingChildren: false,
@@ -1507,7 +1498,7 @@ class App extends PureComponent<Props, State> {
         <GrpcProvider>
           <div className="app" key={uniquenessKey}>
             <ErrorBoundary showAlert>
-              {/* @ts-expect-error -- TSCONVERSION expected props are not recieved likely because of the this.props expansion */}
+              {/* @ts-expect-error -- TSCONVERSION expected props are not received likely because of the this.props expansion */}
               <Wrapper
                 {...this.props}
                 ref={this._setWrapperRef}
@@ -1532,7 +1523,6 @@ class App extends PureComponent<Props, State> {
                 handleGetRenderContext={this._handleGetRenderContext}
                 handleDuplicateRequest={this._requestDuplicate}
                 handleDuplicateRequestGroup={App._requestGroupDuplicate}
-                handleMoveRequestGroup={App._requestGroupMove}
                 handleDuplicateWorkspace={this._workspaceDuplicate}
                 handleCreateRequestGroup={this._requestGroupCreate}
                 handleGenerateCode={App._handleGenerateCode}
@@ -1547,9 +1537,7 @@ class App extends PureComponent<Props, State> {
                 handleSetActiveResponse={this._handleSetActiveResponse}
                 handleSetActiveEnvironment={this._handleSetActiveEnvironment}
                 handleSetSidebarFilter={this._handleSetSidebarFilter}
-                handleToggleMenuBar={this._handleToggleMenuBar}
                 handleUpdateRequestMimeType={this._handleUpdateRequestMimeType}
-                handleShowExportRequestsModal={this._handleShowExportRequestsModal}
                 handleShowSettingsModal={App._handleShowSettingsModal}
                 handleUpdateDownloadPath={this._handleUpdateDownloadPath}
                 isVariableUncovered={isVariableUncovered}
@@ -1571,161 +1559,6 @@ class App extends PureComponent<Props, State> {
       </KeydownBinder>
     );
   }
-}
-
-function mapStateToProps(state, props) {
-  const { entities, global } = state;
-  const { activeActivity, isLoading, loadingRequestIds, isLoggedIn } = global;
-  // Entities
-  // @ts-expect-error -- TSCONVERSION https://github.com/reduxjs/reselect#accessing-react-props-in-selectors
-  const entitiesLists = selectEntitiesLists(state, props);
-  const {
-    // @ts-expect-error -- TSCONVERSION
-    apiSpecs,
-    // @ts-expect-error -- TSCONVERSION
-    environments,
-    // @ts-expect-error -- TSCONVERSION
-    gitRepositories,
-    // @ts-expect-error -- TSCONVERSION
-    requestGroups,
-    // @ts-expect-error -- TSCONVERSION
-    requestMetas,
-    // @ts-expect-error -- TSCONVERSION
-    requestVersions,
-    // @ts-expect-error -- TSCONVERSION
-    requests,
-    // @ts-expect-error -- TSCONVERSION
-    workspaceMetas,
-    // @ts-expect-error -- TSCONVERSION
-    workspaces,
-  } = entitiesLists;
-  // @ts-expect-error -- TSCONVERSION
-  const settings = entitiesLists.settings[0];
-  // Workspace stuff
-  // @ts-expect-error -- TSCONVERSION https://github.com/reduxjs/reselect#accessing-react-props-in-selectors
-  const activeWorkspaceMeta = selectActiveWorkspaceMeta(state, props);
-  // @ts-expect-error -- TSCONVERSION https://github.com/reduxjs/reselect#accessing-react-props-in-selectors
-  const activeWorkspace = selectActiveWorkspace(state, props);
-  // @ts-expect-error -- TSCONVERSION https://github.com/reduxjs/reselect#accessing-react-props-in-selectors
-  const activeWorkspaceClientCertificates = selectActiveWorkspaceClientCertificates(state, props);
-  // @ts-expect-error -- TSCONVERSION https://github.com/reduxjs/reselect#accessing-react-props-in-selectors
-  const activeGitRepository = selectActiveGitRepository(state, props);
-  const safeMeta = activeWorkspaceMeta || {};
-  const sidebarHidden = safeMeta.sidebarHidden || false;
-  const sidebarFilter = safeMeta.sidebarFilter || '';
-  const sidebarWidth = safeMeta.sidebarWidth || DEFAULT_SIDEBAR_WIDTH;
-  const paneWidth = safeMeta.paneWidth || DEFAULT_PANE_WIDTH;
-  const paneHeight = safeMeta.paneHeight || DEFAULT_PANE_HEIGHT;
-  // Request stuff
-  // @ts-expect-error -- TSCONVERSION https://github.com/reduxjs/reselect#accessing-react-props-in-selectors
-  const requestMeta = selectActiveRequestMeta(state, props) || {};
-  // @ts-expect-error -- TSCONVERSION https://github.com/reduxjs/reselect#accessing-react-props-in-selectors
-  const activeRequest = selectActiveRequest(state, props);
-  const responsePreviewMode = requestMeta.previewMode || PREVIEW_MODE_SOURCE;
-  const responseFilter = requestMeta.responseFilter || '';
-  const responseFilterHistory = requestMeta.responseFilterHistory || [];
-  const responseDownloadPath = requestMeta.downloadPath || null;
-  // Cookie Jar
-  // @ts-expect-error -- TSCONVERSION https://github.com/reduxjs/reselect#accessing-react-props-in-selectors
-  const activeCookieJar = selectActiveCookieJar(state, props);
-  // Response stuff
-  // @ts-expect-error -- TSCONVERSION https://github.com/reduxjs/reselect#accessing-react-props-in-selectors
-  const activeRequestResponses = selectActiveRequestResponses(state, props) || [];
-  // @ts-expect-error -- TSCONVERSION https://github.com/reduxjs/reselect#accessing-react-props-in-selectors
-  const activeResponse = selectActiveResponse(state, props) || null;
-  // Environment stuff
-  const activeEnvironmentId = safeMeta.activeEnvironmentId;
-  const activeEnvironment = entities.environments[activeEnvironmentId];
-  // OAuth2Token stuff
-  // @ts-expect-error -- TSCONVERSION https://github.com/reduxjs/reselect#accessing-react-props-in-selectors
-  const oAuth2Token = selectActiveOAuth2Token(state, props);
-  // Find other meta things
-  const loadStartTime = loadingRequestIds[activeRequest ? activeRequest._id : 'n/a'] || -1;
-  // @ts-expect-error -- TSCONVERSION https://github.com/reduxjs/reselect#accessing-react-props-in-selectors
-  const sidebarChildren = selectSidebarChildren(state, props);
-  // @ts-expect-error -- TSCONVERSION https://github.com/reduxjs/reselect#accessing-react-props-in-selectors
-  const workspaceChildren = selectWorkspaceRequestsAndRequestGroups(state, props);
-  // @ts-expect-error -- TSCONVERSION https://github.com/reduxjs/reselect#accessing-react-props-in-selectors
-  const unseenWorkspaces = selectUnseenWorkspaces(state, props);
-  // Sync stuff
-  // @ts-expect-error -- TSCONVERSION https://github.com/reduxjs/reselect#accessing-react-props-in-selectors
-  const syncItems = selectSyncItems(state, props);
-  // Api spec stuff
-  const activeApiSpec = apiSpecs.find(s => s.parentId === activeWorkspace._id);
-  // Test stuff
-  // @ts-expect-error -- TSCONVERSION https://github.com/reduxjs/reselect#accessing-react-props-in-selectors
-  const activeUnitTests = selectActiveUnitTests(state, props);
-  // @ts-expect-error -- TSCONVERSION https://github.com/reduxjs/reselect#accessing-react-props-in-selectors
-  const activeUnitTestSuite = selectActiveUnitTestSuite(state, props);
-  // @ts-expect-error -- TSCONVERSION https://github.com/reduxjs/reselect#accessing-react-props-in-selectors
-  const activeUnitTestSuites = selectActiveUnitTestSuites(state, props);
-  // @ts-expect-error -- TSCONVERSION https://github.com/reduxjs/reselect#accessing-react-props-in-selectors
-  const activeUnitTestResult = selectActiveUnitTestResult(state, props);
-  return Object.assign({}, state, {
-    activity: activeActivity,
-    activeApiSpec,
-    activeCookieJar,
-    activeEnvironment,
-    activeGitRepository,
-    activeRequest,
-    activeRequestResponses,
-    activeResponse,
-    activeUnitTestResult,
-    activeUnitTestSuite,
-    activeUnitTestSuites,
-    activeUnitTests,
-    activeWorkspace,
-    activeWorkspaceClientCertificates,
-    activeWorkspaceMeta,
-    apiSpecs,
-    environments,
-    gitRepositories,
-    isLoading,
-    isLoggedIn,
-    loadStartTime,
-    oAuth2Token,
-    paneHeight,
-    paneWidth,
-    requestGroups,
-    requestMetas,
-    requestVersions,
-    requests,
-    responseDownloadPath,
-    responseFilter,
-    responseFilterHistory,
-    responsePreviewMode,
-    settings,
-    sidebarChildren,
-    sidebarFilter,
-    sidebarHidden,
-    sidebarWidth,
-    syncItems,
-    unseenWorkspaces,
-    workspaceChildren,
-    workspaces,
-    workspaceMetas,
-  });
-}
-
-function mapDispatchToProps(dispatch) {
-  // @ts-expect-error -- TSCONVERSION
-  const global: any = bindActionCreators(globalActions, dispatch);
-  const entities = bindActionCreators(entitiesActions, dispatch);
-  return {
-    handleStartLoading: global.loadRequestStart,
-    handleStopLoading: global.loadRequestStop,
-    handleSetActiveActivity: global.setActiveActivity,
-    handleGoToNextActivity: global.goToNextActivity,
-    handleSetActiveWorkspace: global.setActiveWorkspace,
-    handleImportFileToWorkspace: global.importFile,
-    handleImportClipBoardToWorkspace: global.importClipBoard,
-    handleImportUriToWorkspace: global.importUri,
-    handleCommand: global.newCommand,
-    handleExportFile: global.exportWorkspacesToFile,
-    handleExportRequestsToFile: global.exportRequestsToFile,
-    handleInitializeEntities: entities.initialize,
-    handleMoveDoc: _moveDoc,
-  };
 }
 
 async function _moveDoc(docToMove, parentId, targetId, targetOffset) {
@@ -1809,5 +1642,185 @@ async function _moveDoc(docToMove, parentId, targetId, targetOffset) {
     }
   }
 }
+
+function mapStateToProps(state, props) {
+  const { entities, global } = state;
+  const { activeActivity, isLoading, loadingRequestIds, isLoggedIn } = global;
+  // Entities
+  // @ts-expect-error -- TSCONVERSION https://github.com/reduxjs/reselect#accessing-react-props-in-selectors
+  const entitiesLists = selectEntitiesLists(state, props);
+  const {
+    // @ts-expect-error -- TSCONVERSION
+    apiSpecs,
+    // @ts-expect-error -- TSCONVERSION
+    environments,
+    // @ts-expect-error -- TSCONVERSION
+    gitRepositories,
+    // @ts-expect-error -- TSCONVERSION
+    requestGroups,
+    // @ts-expect-error -- TSCONVERSION
+    requestMetas,
+    // @ts-expect-error -- TSCONVERSION
+    requestVersions,
+    // @ts-expect-error -- TSCONVERSION
+    requests,
+    // @ts-expect-error -- TSCONVERSION
+    workspaceMetas,
+  } = entitiesLists;
+  // @ts-expect-error -- TSCONVERSION
+  const settings = entitiesLists.settings[0];
+  // Workspace stuff
+
+  // @ts-expect-error -- TSCONVERSION https://github.com/reduxjs/reselect#accessing-react-props-in-selectors
+  const activeSpace = selectActiveSpace(state, props);
+  // @ts-expect-error -- TSCONVERSION https://github.com/reduxjs/reselect#accessing-react-props-in-selectors
+  const workspaces = selectWorkspacesForActiveSpace(state, props);
+  // @ts-expect-error -- TSCONVERSION https://github.com/reduxjs/reselect#accessing-react-props-in-selectors
+  const activeWorkspaceMeta = selectActiveWorkspaceMeta(state, props);
+  // @ts-expect-error -- TSCONVERSION https://github.com/reduxjs/reselect#accessing-react-props-in-selectors
+  const activeWorkspace = selectActiveWorkspace(state, props);
+  // @ts-expect-error -- TSCONVERSION https://github.com/reduxjs/reselect#accessing-react-props-in-selectors
+  const activeWorkspaceClientCertificates = selectActiveWorkspaceClientCertificates(state, props);
+  // @ts-expect-error -- TSCONVERSION https://github.com/reduxjs/reselect#accessing-react-props-in-selectors
+  const activeGitRepository = selectActiveGitRepository(state, props);
+  const safeMeta = activeWorkspaceMeta || {};
+  const sidebarHidden = safeMeta.sidebarHidden || false;
+  const sidebarFilter = safeMeta.sidebarFilter || '';
+  const sidebarWidth = safeMeta.sidebarWidth || DEFAULT_SIDEBAR_WIDTH;
+  const paneWidth = safeMeta.paneWidth || DEFAULT_PANE_WIDTH;
+  const paneHeight = safeMeta.paneHeight || DEFAULT_PANE_HEIGHT;
+  // Request stuff
+  // @ts-expect-error -- TSCONVERSION https://github.com/reduxjs/reselect#accessing-react-props-in-selectors
+  const requestMeta = selectActiveRequestMeta(state, props) || {};
+  // @ts-expect-error -- TSCONVERSION https://github.com/reduxjs/reselect#accessing-react-props-in-selectors
+  const activeRequest = selectActiveRequest(state, props);
+  const responsePreviewMode = requestMeta.previewMode || PREVIEW_MODE_SOURCE;
+  const responseFilter = requestMeta.responseFilter || '';
+  const responseFilterHistory = requestMeta.responseFilterHistory || [];
+  const responseDownloadPath = requestMeta.downloadPath || null;
+  // Cookie Jar
+  // @ts-expect-error -- TSCONVERSION https://github.com/reduxjs/reselect#accessing-react-props-in-selectors
+  const activeCookieJar = selectActiveCookieJar(state, props);
+  // Response stuff
+  // @ts-expect-error -- TSCONVERSION https://github.com/reduxjs/reselect#accessing-react-props-in-selectors
+  const activeRequestResponses = selectActiveRequestResponses(state, props) || [];
+  // @ts-expect-error -- TSCONVERSION https://github.com/reduxjs/reselect#accessing-react-props-in-selectors
+  const activeResponse = selectActiveResponse(state, props) || null;
+  // Environment stuff
+  const activeEnvironmentId = safeMeta.activeEnvironmentId;
+  const activeEnvironment = entities.environments[activeEnvironmentId];
+  // OAuth2Token stuff
+  // @ts-expect-error -- TSCONVERSION https://github.com/reduxjs/reselect#accessing-react-props-in-selectors
+  const oAuth2Token = selectActiveOAuth2Token(state, props);
+  // Find other meta things
+  const loadStartTime = loadingRequestIds[activeRequest ? activeRequest._id : 'n/a'] || -1;
+  // @ts-expect-error -- TSCONVERSION https://github.com/reduxjs/reselect#accessing-react-props-in-selectors
+  const sidebarChildren = selectSidebarChildren(state, props);
+  // @ts-expect-error -- TSCONVERSION https://github.com/reduxjs/reselect#accessing-react-props-in-selectors
+  const workspaceChildren = selectWorkspaceRequestsAndRequestGroups(state, props);
+  // @ts-expect-error -- TSCONVERSION https://github.com/reduxjs/reselect#accessing-react-props-in-selectors
+  const unseenWorkspaces = selectUnseenWorkspaces(state, props);
+  // Sync stuff
+  // @ts-expect-error -- TSCONVERSION https://github.com/reduxjs/reselect#accessing-react-props-in-selectors
+  const syncItems = selectSyncItems(state, props);
+  // Api spec stuff
+  const activeApiSpec = apiSpecs.find(s => s.parentId === activeWorkspace._id);
+  // Test stuff
+  // @ts-expect-error -- TSCONVERSION https://github.com/reduxjs/reselect#accessing-react-props-in-selectors
+  const activeUnitTests = selectActiveUnitTests(state, props);
+  // @ts-expect-error -- TSCONVERSION https://github.com/reduxjs/reselect#accessing-react-props-in-selectors
+  const activeUnitTestSuite = selectActiveUnitTestSuite(state, props);
+  // @ts-expect-error -- TSCONVERSION https://github.com/reduxjs/reselect#accessing-react-props-in-selectors
+  const activeUnitTestSuites = selectActiveUnitTestSuites(state, props);
+  // @ts-expect-error -- TSCONVERSION https://github.com/reduxjs/reselect#accessing-react-props-in-selectors
+  const activeUnitTestResult = selectActiveUnitTestResult(state, props);
+  return Object.assign({}, state, {
+    activity: activeActivity,
+    activeSpace,
+    activeApiSpec,
+    activeCookieJar,
+    activeEnvironment,
+    activeGitRepository,
+    activeRequest,
+    activeRequestResponses,
+    activeResponse,
+    activeUnitTestResult,
+    activeUnitTestSuite,
+    activeUnitTestSuites,
+    activeUnitTests,
+    activeWorkspace,
+    activeWorkspaceClientCertificates,
+    activeWorkspaceMeta,
+    apiSpecs,
+    environments,
+    gitRepositories,
+    isLoading,
+    isLoggedIn,
+    loadStartTime,
+    oAuth2Token,
+    paneHeight,
+    paneWidth,
+    requestGroups,
+    requestMetas,
+    requestVersions,
+    requests,
+    responseDownloadPath,
+    responseFilter,
+    responseFilterHistory,
+    responsePreviewMode,
+    settings,
+    sidebarChildren,
+    sidebarFilter,
+    sidebarHidden,
+    sidebarWidth,
+    syncItems,
+    unseenWorkspaces,
+    workspaceChildren,
+    workspaces,
+    workspaceMetas,
+  });
+}
+
+const mapDispatchToProps = (dispatch: Dispatch<Action<any>>): ReduxDispatchProps => {
+  const {
+    importUri: handleImportUriToWorkspace,
+    loadRequestStart: handleStartLoading,
+    loadRequestStop: handleStopLoading,
+    setActiveWorkspace: handleSetActiveWorkspace,
+    newCommand: handleCommand,
+    setActiveActivity: handleSetActiveActivity,
+    goToNextActivity: handleGoToNextActivity,
+    importFile: handleImportFileToWorkspace,
+    importClipBoard: handleImportClipBoardToWorkspace,
+    exportRequestsToFile: handleExportRequestsToFile,
+    initialize: handleInitializeEntities,
+  } = bindActionCreators({
+    importUri,
+    loadRequestStart,
+    loadRequestStop,
+    newCommand,
+    setActiveWorkspace,
+    setActiveActivity,
+    goToNextActivity,
+    importFile,
+    importClipBoard,
+    exportRequestsToFile,
+    initialize,
+  }, dispatch);
+  return {
+    handleCommand,
+    handleImportUriToWorkspace,
+    handleSetActiveWorkspace,
+    handleSetActiveActivity,
+    handleStartLoading,
+    handleStopLoading,
+    handleGoToNextActivity,
+    handleImportFileToWorkspace,
+    handleImportClipBoardToWorkspace,
+    handleExportRequestsToFile,
+    handleInitializeEntities,
+    handleMoveDoc: _moveDoc, // TODO this doesn't use dispatch.. it's unclear why it needs to be here.
+  };
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(withDragDropContext(App));

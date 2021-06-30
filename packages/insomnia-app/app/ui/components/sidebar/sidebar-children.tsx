@@ -6,12 +6,11 @@ import SidebarRequestRow from './sidebar-request-row';
 import SidebarRequestGroupRow from './sidebar-request-group-row';
 import type { RequestGroup } from '../../../models/request-group';
 import type { Workspace } from '../../../models/workspace';
-import type { Request } from '../../../models/request';
+import { isRequest, Request } from '../../../models/request';
 import type { HotKeyRegistry } from '../../../common/hotkeys';
 import type { Environment } from '../../../models/environment';
 import SidebarCreateDropdown from './sidebar-create-dropdown';
-import { GrpcRequest } from '../../../models/grpc-request';
-import { isGrpcRequest, isRequest } from '../../../models/helpers/is-model';
+import { GrpcRequest, isGrpcRequest } from '../../../models/grpc-request';
 import { HandleRender } from '../../../common/render';
 
 export interface Child {
@@ -33,7 +32,6 @@ interface Props {
   handleSetRequestGroupCollapsed: Function;
   handleDuplicateRequest: Function;
   handleDuplicateRequestGroup: (requestGroup: RequestGroup) => any;
-  handleMoveRequestGroup: (requestGroup: RequestGroup) => Promise<void>;
   handleGenerateCode: Function;
   handleCopyAsCurl: Function;
   handleRender: HandleRender;
@@ -83,7 +81,6 @@ class SidebarChildren extends PureComponent<Props> {
       handleSetRequestGroupCollapsed,
       handleDuplicateRequest,
       handleDuplicateRequestGroup,
-      handleMoveRequestGroup,
       handleGenerateCode,
       handleCopyAsCurl,
       handleRender,
@@ -152,7 +149,6 @@ class SidebarChildren extends PureComponent<Props> {
           handleActivateRequest={handleActivateRequest}
           handleSetRequestGroupCollapsed={handleSetRequestGroupCollapsed}
           handleDuplicateRequestGroup={handleDuplicateRequestGroup}
-          handleMoveRequestGroup={handleMoveRequestGroup}
           handleRender={handleRender}
           isCollapsed={child.collapsed}
           handleCreateRequest={handleCreateRequest}

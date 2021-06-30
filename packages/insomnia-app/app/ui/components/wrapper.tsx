@@ -3,7 +3,8 @@ import type { Response } from '../../models/response';
 import type { OAuth2Token } from '../../models/o-auth-2-token';
 import type { Workspace } from '../../models/workspace';
 import type { WorkspaceMeta } from '../../models/workspace-meta';
-import type {
+import {
+  isRequest,
   Request,
   RequestAuthentication,
   RequestBody,
@@ -40,12 +41,13 @@ import NunjucksModal from './modals/nunjucks-modal';
 import PromptModal from './modals/prompt-modal';
 import AskModal from './modals/ask-modal';
 import GenerateConfigModal from './modals/generate-config-modal';
-import SelectModal from './modals/select-modal';
+import { SelectModal } from './modals/select-modal';
 import RequestCreateModal from './modals/request-create-modal';
 import RequestSwitcherModal from './modals/request-switcher-modal';
 import SettingsModal from './modals/settings-modal';
 import FilterHelpModal from './modals/filter-help-modal';
 import RequestSettingsModal from './modals/request-settings-modal';
+import RequestGroupSettingsModal from './modals/request-group-settings-modal';
 import SyncStagingModal from './modals/sync-staging-modal';
 import GitRepositorySettingsModal from './modals/git-repository-settings-modal';
 import GitStagingModal from './modals/git-staging-modal';
@@ -67,10 +69,9 @@ import type { Cookie, CookieJar } from '../../models/cookie-jar';
 import type { Environment } from '../../models/environment';
 import ErrorBoundary from './error-boundary';
 import type { ClientCertificate } from '../../models/client-certificate';
-import MoveRequestGroupModal from './modals/move-request-group-modal';
 import AddKeyCombinationModal from './modals/add-key-combination-modal';
 import ExportRequestsModal from './modals/export-requests-modal';
-import VCS from '../../sync/vcs';
+import { VCS } from '../../sync/vcs/vcs';
 import type { StatusCandidate } from '../../sync/types';
 import type { RequestMeta } from '../../models/request-meta';
 import type { RequestVersion } from '../../models/request-version';
@@ -99,6 +100,7 @@ import WrapperAnalytics from './wrapper-analytics';
 import { HandleGetRenderContext, HandleRender } from '../../common/render';
 import { RequestGroup } from '../../models/request-group';
 import SpaceSettingsModal from './modals/space-settings-modal';
+import { Space } from '../../models/space';
 
 const spectral = new Spectral();
 
@@ -106,13 +108,10 @@ export interface WrapperProps {
   // Helper Functions
   handleActivateRequest: (activeRequestId: string) => void;
   handleSetSidebarFilter: (value: string) => Promise<void>;
-  handleToggleMenuBar: Function;
   handleImportFileToWorkspace: (workspaceId: string, options?: ImportOptions) => void;
   handleImportClipBoardToWorkspace: (workspaceId: string, options?: ImportOptions) => void;
   handleImportUriToWorkspace: (workspaceId: string, uri: string, options?: ImportOptions) => void;
   handleInitializeEntities: () => Promise<void>;
-  handleExportFile: Function;
-  handleShowExportRequestsModal: Function;
   handleShowSettingsModal: Function;
   handleExportRequestsToFile: Function;
   handleSetActiveWorkspace: (workspaceId: string | null) => void;
@@ -121,7 +120,6 @@ export interface WrapperProps {
   handleCreateRequest: (id: string) => any;
   handleDuplicateRequest: Function;
   handleDuplicateRequestGroup: (requestGroup: RequestGroup) => void;
-  handleMoveRequestGroup: (requestGroup: RequestGroup) => Promise<void>;
   handleDuplicateWorkspace: Function;
   handleCreateRequestGroup: (parentId: string) => void;
   handleGenerateCodeForActiveRequest: Function;
@@ -156,6 +154,7 @@ export interface WrapperProps {
   apiSpecs: ApiSpec[];
   loadStartTime: number;
   isLoading: boolean;
+  isLoggedIn: boolean;
   paneWidth: number;
   paneHeight: number;
   responsePreviewMode: string;
@@ -176,6 +175,7 @@ export interface WrapperProps {
   activeWorkspaceMeta?: WorkspaceMeta;
   environments: Environment[];
   activeApiSpec: ApiSpec;
+  activeSpace?: Space;
   activeUnitTestSuite: UnitTestSuite | null;
   activeRequestResponses: Response[];
   activeWorkspace: Workspace;
@@ -441,7 +441,7 @@ class Wrapper extends PureComponent<WrapperProps, State> {
 
   async _handleActiveWorkspaceClearAllResponses() {
     const docs = await db.withDescendants(this.props.activeWorkspace, models.request.type);
-    const requests = docs.filter(doc => doc.type === models.request.type);
+    const requests = docs.filter(isRequest);
 
     for (const req of requests) {
       await models.response.removeForRequest(req._id);
@@ -531,21 +531,19 @@ class Wrapper extends PureComponent<WrapperProps, State> {
       activeGitRepository,
       activeRequest,
       activeWorkspace,
+      activeSpace,
       activeApiSpec,
       activeWorkspaceClientCertificates,
       activity,
       gitVCS,
       handleActivateRequest,
       handleDuplicateWorkspace,
-      handleExportFile,
       handleExportRequestsToFile,
       handleGetRenderContext,
       handleInitializeEntities,
       handleRender,
       handleSetActiveWorkspace,
-      handleShowExportRequestsModal,
       handleSidebarSort,
-      handleToggleMenuBar,
       isVariableUncovered,
       requestMetas,
       settings,
@@ -622,6 +620,19 @@ class Wrapper extends PureComponent<WrapperProps, State> {
               isVariableUncovered={isVariableUncovered}
             />
 
+            <RequestGroupSettingsModal
+              ref={registerModal}
+              editorFontSize={settings.editorFontSize}
+              editorIndentSize={settings.editorIndentSize}
+              editorKeyMap={settings.editorKeyMap}
+              editorLineWrapping={settings.editorLineWrapping}
+              handleRender={handleRender}
+              handleGetRenderContext={handleGetRenderContext}
+              nunjucksPowerUserMode={settings.nunjucksPowerUserMode}
+              workspaces={workspaces}
+              isVariableUncovered={isVariableUncovered}
+            />
+
             {/* TODO: Figure out why cookieJar is sometimes null */}
             {activeCookieJar ? (
               <CookiesModal
@@ -649,12 +660,6 @@ class Wrapper extends PureComponent<WrapperProps, State> {
               handleRender={handleRender}
               handleGetRenderContext={handleGetRenderContext}
               workspace={activeWorkspace}
-            />
-
-            <MoveRequestGroupModal
-              ref={registerModal}
-              workspaces={workspaces}
-              activeWorkspace={activeWorkspace}
             />
 
             <WorkspaceSettingsModal
@@ -685,12 +690,6 @@ class Wrapper extends PureComponent<WrapperProps, State> {
 
             <SettingsModal
               ref={registerModal}
-              handleShowExportRequestsModal={handleShowExportRequestsModal}
-              handleExportAllToFile={handleExportFile}
-              handleImportClipBoard={this._handleImportClipBoard}
-              handleImportFile={this._handleImportFile}
-              handleImportUri={this._handleImportUri}
-              handleToggleMenuBar={handleToggleMenuBar}
               settings={settings}
             />
 
@@ -755,6 +754,7 @@ class Wrapper extends PureComponent<WrapperProps, State> {
                   ref={registerModal}
                   workspace={activeWorkspace}
                   vcs={vcs}
+                  space={activeSpace}
                   syncItems={syncItems}
                 />
                 <SyncDeleteModal ref={registerModal} workspace={activeWorkspace} vcs={vcs} />

@@ -6,11 +6,10 @@ import ModalBody from '../base/modal-body';
 import ModalHeader from '../base/modal-header';
 import ModalFooter from '../base/modal-footer';
 import Tree from '../export-requests/tree';
-import type { Request } from '../../../models/request';
-import type { RequestGroup } from '../../../models/request-group';
+import { isRequest, Request } from '../../../models/request';
+import { isRequestGroup, RequestGroup } from '../../../models/request-group';
 import * as models from '../../../models';
-import type { GrpcRequest } from '../../../models/grpc-request';
-import { isGrpcRequest, isRequest, isRequestGroup } from '../../../models/helpers/is-model';
+import { GrpcRequest, isGrpcRequest } from '../../../models/grpc-request';
 import { Child } from '../sidebar/sidebar-children';
 
 export interface Node {
@@ -88,15 +87,17 @@ class ExportRequestsModal extends PureComponent<Props, State> {
     const totalRequests = children
       .map(child => child.totalRequests)
       .reduce((acc, totalRequests) => acc + totalRequests, 0);
+
     // @ts-expect-error -- TSCONVERSION missing property
-    const rootFolder: RequestGroup = Object.assign({}, models.requestGroup.init(), {
+    const rootFolder: RequestGroup = {
+      ...models.requestGroup.init(),
       _id: 'all',
       type: models.requestGroup.type,
       name: 'All requests',
       parentId: '',
       modified: 0,
       created: 0,
-    });
+    };
     this.setState({
       treeRoot: {
         doc: rootFolder,

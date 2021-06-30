@@ -23,6 +23,7 @@ import {
   generateCandidateMap,
   getRootSnapshot,
   getStagable,
+  hash,
   hashDocument,
   preMergeCheck,
   stateDelta,
@@ -34,12 +35,13 @@ import * as crypt from '../../account/crypt';
 import * as session from '../../account/session';
 import * as fetch from '../../account/fetch';
 import { strings } from '../../common/strings';
+import { BaseModel } from '../../models';
 
 const EMPTY_HASH = crypto.createHash('sha1').digest('hex').replace(/./g, '0');
 
 type ConflictHandler = (conflicts: MergeConflict[]) => Promise<MergeConflict[]>;
 
-export default class VCS {
+export class VCS {
   _store: Store;
   _driver: BaseDriver;
   _project: Project | null;
@@ -154,10 +156,7 @@ export default class VCS {
     return {
       stage,
       unstaged,
-      key: hashDocument({
-        stage,
-        unstaged,
-      }).hash,
+      key: hash({ stage, unstaged }).hash,
     };
   }
 
@@ -456,8 +455,8 @@ export default class VCS {
     console.log(`[sync] Created snapshot ${snapshot.id} (${name})`);
   }
 
-  async pull(candidates: StatusCandidate[]) {
-    await this._getOrCreateRemoteProject();
+  async pull(candidates: StatusCandidate[], teamId: string | undefined | null) {
+    await this._getOrCreateRemoteProject(teamId || '');
     const localBranch = await this._getCurrentBranch();
     const tmpBranchForRemote = await this._fetch(localBranch.name + '.hidden', localBranch.name);
     // Merge branch and ensure that we use the remote's history when merging
@@ -500,20 +499,29 @@ export default class VCS {
     console.log(`[sync] Unshared project ${this._projectId()}`);
   }
 
-  async _getOrCreateRemoteProject() {
+  async _getOrCreateRemoteProject(teamId: string) {
     const localProject = await this._assertProject();
-    let project = await this._queryProject();
+    let remoteProject = await this._queryProject();
 
-    if (!project) {
-      project = await this._queryCreateProject(localProject.rootDocumentId, localProject.name);
+    if (!remoteProject) {
+      remoteProject = await this._createRemoteProject(localProject, teamId);
     }
 
-    await this._storeProject(project);
-    return project;
+    await this._storeProject(remoteProject);
+    return remoteProject;
   }
 
-  async push() {
-    await this._getOrCreateRemoteProject();
+  async _createRemoteProject({ rootDocumentId, name }: Project, teamId: string) {
+    if (!teamId) {
+      throw new Error('teamId should be defined');
+    }
+
+    const teamKeys = await this._queryTeamMemberKeys(teamId);
+    return this._queryCreateProject(rootDocumentId, name, teamId, teamKeys.memberKeys);
+  }
+
+  async push(teamId: string | undefined | null) {
+    await this._getOrCreateRemoteProject(teamId || '');
     const branch = await this._getCurrentBranch();
     // Check branch history to make sure there are no conflicts
     let lastMatchingIndex = 0;
@@ -1163,18 +1171,85 @@ export default class VCS {
     return project.teams;
   }
 
-  async _queryCreateProject(workspaceId: string, workspaceName: string) {
-    const { publicKey } = this._assertSession();
+  async _queryTeamMemberKeys(
+    teamId: string,
+  ): Promise<{
+    memberKeys: {
+      accountId: string;
+      publicKey: string;
+    }[];
+  }> {
+    const { teamMemberKeys } = await this._runGraphQL(
+      `
+        query ($teamId: ID!) {
+          teamMemberKeys(teamId: $teamId) {
+            memberKeys {
+              accountId
+              publicKey
+            }
+          }
+        }
+      `,
+      {
+        teamId: teamId,
+      },
+      'teamMemberKeys',
+    );
+    return teamMemberKeys;
+  }
 
+  async _queryCreateProject(
+    workspaceId: string,
+    workspaceName: string,
+    teamId: string,
+    teamPublicKeys?: {
+      accountId: string;
+      publicKey: string;
+    }[],
+  ) {
     // Generate symmetric key for ResourceGroup
     const symmetricKey = await crypt.generateAES256Key();
     const symmetricKeyStr = JSON.stringify(symmetricKey);
-    // Encrypt the symmetric key with Account public key
-    const encSymmetricKey = crypt.encryptRSAWithJWK(publicKey, symmetricKeyStr);
+
+    const teamKeys: {accountId: string, encSymmetricKey: string}[] = [];
+    let encSymmetricKey: string | undefined;
+
+    if (teamId) {
+      if (!teamPublicKeys?.length) {
+        throw new Error('teamPublicKeys must not be null or empty!');
+      }
+
+      // Encrypt the symmetric key with the public keys of all the team members, ourselves included
+      for (const { accountId, publicKey } of teamPublicKeys) {
+        teamKeys.push({
+          accountId,
+          encSymmetricKey: crypt.encryptRSAWithJWK(JSON.parse(publicKey), symmetricKeyStr),
+        });
+      }
+    } else {
+      const { publicKey } = this._assertSession();
+      // Encrypt the symmetric key with the account public key
+      encSymmetricKey = crypt.encryptRSAWithJWK(publicKey, symmetricKeyStr);
+    }
+
     const { projectCreate } = await this._runGraphQL(
       `
-        mutation ($rootDocumentId: ID!, $name: String!, $id: ID!, $key: String!) {
-          projectCreate(name: $name, id: $id, rootDocumentId: $rootDocumentId, encSymmetricKey: $key) {
+        mutation (
+          $name: String!,
+          $id: ID!,
+          $rootDocumentId: ID!,
+          $encSymmetricKey: String,
+          $teamId: ID,
+          $teamKeys: [ProjectCreateKeyInput!],
+        ) {
+          projectCreate(
+            name: $name,
+            id: $id,
+            rootDocumentId: $rootDocumentId,
+            encSymmetricKey: $encSymmetricKey,
+            teamId: $teamId,
+            teamKeys: $teamKeys,
+          ) {
             id
             name
             rootDocumentId
@@ -1182,13 +1257,16 @@ export default class VCS {
         }
       `,
       {
+        name: workspaceName,
         id: this._projectId(),
         rootDocumentId: workspaceId,
-        name: workspaceName,
-        key: encSymmetricKey,
+        encSymmetricKey: encSymmetricKey,
+        teamId: teamId,
+        teamKeys: teamKeys,
       },
-      'switchAndCreateProjectIfNotExist',
+      'createProject',
     );
+
     console.log(`[sync] Created remote project ${projectCreate.id} (${projectCreate.name})`);
     return projectCreate as Project;
   }
@@ -1462,9 +1540,9 @@ export default class VCS {
     await this._store.setItem(paths.head(this._projectId()), head);
   }
 
-  async _getBlob(id: string) {
+  _getBlob(id: string) {
     const p = paths.blob(this._projectId(), id);
-    return this._store.getItem(p) as Record<string, any> | null;
+    return this._store.getItem(p) as Promise<BaseModel | null>;
   }
 
   async _getBlobs(ids: string[]) {

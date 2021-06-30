@@ -41,30 +41,34 @@ import PageLayout from './page-layout';
 import { ForceToWorkspaceKeys } from '../redux/modules/helpers';
 import coreLogo from '../images/insomnia-core-logo.png';
 import { parseApiSpec, ParsedApiSpec } from '../../common/api-specs';
-import RemoteWorkspacesDropdown from './dropdowns/remote-workspaces-dropdown';
+import { RemoteWorkspacesDropdown } from './dropdowns/remote-workspaces-dropdown';
 import SettingsButton from './buttons/settings-button';
 import AccountDropdown from './dropdowns/account-dropdown';
 import { strings } from '../../common/strings';
 import { descendingNumberSort } from '../../common/sorting';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import * as workspaceActions from '../redux/modules/workspace';
-import * as gitActions from '../redux/modules/git';
+import { createWorkspace } from '../redux/modules/workspace';
+import { cloneGitRepository } from '../redux/modules/git';
 import { MemClient } from '../../sync/git/mem-client';
 import { SpaceDropdown } from './dropdowns/space-dropdown';
+import { initializeLocalProjectAndMarkForSync } from '../../sync/vcs/initialize-project';
 
 interface RenderedCard {
   card: ReactNode;
   lastModifiedTimestamp?: number | null;
 }
 
-interface Props {
+interface ReduxDispatchProps {
+  handleCreateWorkspace: typeof createWorkspace;
+  handleGitCloneWorkspace: typeof cloneGitRepository;
+}
+
+interface Props extends ReduxDispatchProps {
   wrapperProps: WrapperProps;
   handleImportFile: HandleImportFileCallback;
   handleImportUri: HandleImportUriCallback;
   handleImportClipboard: HandleImportClipboardCallback;
-  handleCreateWorkspace: workspaceActions.CreateWorkspaceCallback;
-  handleGitCloneWorkspace: Function;
 }
 
 interface State {
@@ -96,8 +100,18 @@ class WrapperHome extends PureComponent<Props, State> {
   }
 
   _handleCollectionCreate() {
-    this.props.handleCreateWorkspace({
+    const { handleCreateWorkspace, wrapperProps: { activeSpace, vcs, isLoggedIn } } = this.props;
+
+    handleCreateWorkspace({
       scope: WorkspaceScopeKeys.collection,
+      onCreate: async workspace => {
+        const spaceRemoteId = activeSpace?.remoteId;
+
+        // Don't mark for sync if not logged in at the time of creation
+        if (isLoggedIn && vcs && spaceRemoteId) {
+          await initializeLocalProjectAndMarkForSync({ vcs: vcs.newInstance(), workspace });
+        }
+      },
     });
   }
 
@@ -332,7 +346,7 @@ class WrapperHome extends PureComponent<Props, State> {
   }
 
   renderDashboardMenu() {
-    const { vcs, workspaces } = this.props.wrapperProps;
+    const { vcs } = this.props.wrapperProps;
     return (
       <div className="row row--right pad-left wide">
         <div
@@ -351,7 +365,7 @@ class WrapperHome extends PureComponent<Props, State> {
             <span className="fa fa-search filter-icon" />
           </KeydownBinder>
         </div>
-        <RemoteWorkspacesDropdown vcs={vcs} workspaces={workspaces} className="margin-left" />
+        <RemoteWorkspacesDropdown vcs={vcs} className="margin-left" />
         {this.renderCreateMenu()}
       </div>
     );
@@ -367,7 +381,7 @@ class WrapperHome extends PureComponent<Props, State> {
       // @ts-expect-error -- TSCONVERSION appears to be a genuine error
       .sort((a: RenderedCard, b: RenderedCard) => descendingNumberSort(a.lastModifiedTimestamp, b.lastModifiedTimestamp))
       .map(c => c?.card);
-    const countLabel = cards.length > 1 ? strings.document.plural : strings.document.singular;
+    const countLabel = cards.length === 1 ? strings.document.singular : strings.document.plural;
     return (
       <PageLayout
         wrapperProps={this.props.wrapperProps}
@@ -415,11 +429,9 @@ class WrapperHome extends PureComponent<Props, State> {
   }
 }
 
-function mapDispatchToProps(dispatch) {
-  return {
-    handleCreateWorkspace: bindActionCreators(workspaceActions.createWorkspace, dispatch),
-    handleGitCloneWorkspace: bindActionCreators(gitActions.cloneGitRepository, dispatch),
-  };
-}
+const mapDispatchToProps = (dispatch): ReduxDispatchProps => ({
+  handleCreateWorkspace: bindActionCreators(createWorkspace, dispatch),
+  handleGitCloneWorkspace: bindActionCreators(cloneGitRepository, dispatch),
+});
 
 export default connect(null, mapDispatchToProps)(WrapperHome);

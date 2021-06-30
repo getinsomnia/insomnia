@@ -130,19 +130,17 @@ const noDocumentFound = (gitRepo: GitRepository) => {
       okLabel: 'Yes',
       addCancel: true,
       message: `No ${strings.document.singular.toLowerCase()} found in the repository for import. Would you like to create a new one?`,
-      onConfirm: async () => await dispatch(createWorkspaceWithGitRepo(gitRepo)),
+      onConfirm: () => dispatch(createWorkspaceWithGitRepo(gitRepo)),
     });
   };
 };
 
-export type CloneGitRepositoryCallback = (arg0: {
-  createFsClient: () => git.PromiseFsClient;
-}) => void;
-
 /**
  * Clone a git repository
  * */
-export const cloneGitRepository: CloneGitRepositoryCallback = ({ createFsClient }) => {
+export const cloneGitRepository = ({ createFsClient }: {
+  createFsClient: () => git.PromiseFsClient;
+}) => {
   return dispatch => {
     showModal(GitRepositorySettingsModal, {
       gitRepository: null,

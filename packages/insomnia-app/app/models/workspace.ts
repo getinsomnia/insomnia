@@ -1,9 +1,10 @@
+import { Merge } from 'type-fest';
+
+import { getAppName } from '../common/constants';
+import { database as db } from '../common/database';
+import { strings } from '../common/strings';
 import type { BaseModel } from './index';
 import * as models from './index';
-import { database as db } from '../common/database';
-import { getAppName } from '../common/constants';
-import { strings } from '../common/strings';
-import { Merge } from 'type-fest';
 import { isSpaceId } from './space';
 
 export const name = 'Workspace';

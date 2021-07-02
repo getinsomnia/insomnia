@@ -1,9 +1,10 @@
-import React, { PureComponent } from 'react';
 import { autoBindMethodsForReact } from 'class-autobind-decorator';
+import React, { PureComponent } from 'react';
+
 import { AUTOBIND_CFG } from '../../../common/constants';
-import Button from '../base/button';
-import type { Theme as ThemeType, ColorScheme } from '../../../plugins';
+import type { ColorScheme, Theme as ThemeType } from '../../../plugins';
 import { getThemes } from '../../../plugins';
+import Button from '../base/button';
 import HelpTooltip from '../help-tooltip';
 const THEMES_PER_ROW = 5;
 

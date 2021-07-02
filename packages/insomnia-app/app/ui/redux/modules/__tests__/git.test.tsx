@@ -1,24 +1,25 @@
-import configureMockStore from 'redux-mock-store';
-import thunk from 'redux-thunk';
-import { globalBeforeEach } from '../../../../__jest__/before-each';
-import { Workspace, WorkspaceScopeKeys } from '../../../../models/workspace';
-import * as models from '../../../../models';
-import { trackEvent, trackSegmentEvent } from '../../../../common/analytics';
-import { ACTIVITY_SPEC } from '../../../../common/constants';
-import { LOAD_START, LOAD_STOP, SET_ACTIVE_ACTIVITY, SET_ACTIVE_WORKSPACE } from '../global';
-import { MemClient } from '../../../../sync/git/mem-client';
-import { generateId } from '../../../../common/misc';
-import { GIT_INSOMNIA_DIR } from '../../../../sync/git/git-vcs';
 import path from 'path';
 import React, { Fragment } from 'react';
-import { cloneGitRepository, setupGitRepository } from '../git';
+import configureMockStore from 'redux-mock-store';
+import thunk from 'redux-thunk';
+
+import { globalBeforeEach } from '../../../../__jest__/before-each';
+import { trackEvent, trackSegmentEvent } from '../../../../common/analytics';
+import { ACTIVITY_SPEC } from '../../../../common/constants';
+import { generateId } from '../../../../common/misc';
+import * as models from '../../../../models';
+import { Workspace, WorkspaceScopeKeys } from '../../../../models/workspace';
+import { GIT_INSOMNIA_DIR } from '../../../../sync/git/git-vcs';
+import { MemClient } from '../../../../sync/git/mem-client';
+import { shallowClone } from '../../../../sync/git/shallow-clone';
 import {
   getAndClearShowAlertMockArgs,
   getAndClearShowErrorMockArgs,
   getAndClearShowModalMockArgs,
   getAndClearShowPromptMockArgs,
 } from '../../../../test-utils';
-import { shallowClone } from '../../../../sync/git/shallow-clone';
+import { cloneGitRepository, setupGitRepository } from '../git';
+import { LOAD_START, LOAD_STOP, SET_ACTIVE_ACTIVITY, SET_ACTIVE_WORKSPACE } from '../global';
 
 jest.mock('../../../components/modals');
 jest.mock('../../../../sync/git/shallow-clone');

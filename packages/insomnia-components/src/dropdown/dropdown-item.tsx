@@ -1,5 +1,5 @@
-import React, { PureComponent, ReactNode } from 'react';
 import { autoBindMethodsForReact } from 'class-autobind-decorator';
+import React, { PureComponent, ReactNode } from 'react';
 import styled, { css } from 'styled-components';
 
 export interface DropdownItemProps {

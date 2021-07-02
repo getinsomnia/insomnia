@@ -1,9 +1,10 @@
 import Color from 'color';
-import { render, THROW_ON_ERROR } from '../common/render';
-import { getThemes } from './index';
-import type { Theme } from './index';
+
 import { getAppDefaultTheme } from '../common/constants';
+import { render, THROW_ON_ERROR } from '../common/render';
 import { Settings } from '../models/settings';
+import type { Theme } from './index';
+import { getThemes } from './index';
 
 interface ThemeBlock {
   background?: {

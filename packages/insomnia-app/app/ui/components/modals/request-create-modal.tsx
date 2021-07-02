@@ -1,5 +1,6 @@
-import React, { PureComponent } from 'react';
 import { autoBindMethodsForReact } from 'class-autobind-decorator';
+import React, { PureComponent } from 'react';
+import { trackEvent } from '../../../common/analytics';
 import {
   AUTOBIND_CFG,
   getContentTypeName,
@@ -9,17 +10,16 @@ import {
   METHOD_DELETE,
   METHOD_GRPC,
 } from '../../../common/constants';
-import ContentTypeDropdown from '../dropdowns/content-type-dropdown';
-import MethodDropdown from '../dropdowns/method-dropdown';
+import * as models from '../../../models/index';
+import { Request } from '../../../models/request';
 import Modal from '../base/modal';
 import ModalBody from '../base/modal-body';
-import ModalHeader from '../base/modal-header';
 import ModalFooter from '../base/modal-footer';
-import * as models from '../../../models/index';
-import { trackEvent } from '../../../common/analytics';
-import { showModal } from './index';
+import ModalHeader from '../base/modal-header';
+import ContentTypeDropdown from '../dropdowns/content-type-dropdown';
+import MethodDropdown from '../dropdowns/method-dropdown';
 import ProtoFilesModal from './proto-files-modal';
-import { Request } from '../../../models/request';
+import { showModal } from './index';
 interface RequestCreateModalOptions {
   parentId: string;
   onComplete: (arg0: string) => void;

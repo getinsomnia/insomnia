@@ -1,7 +1,7 @@
-import mkdirp from 'mkdirp';
 import { EventEmitter } from 'events';
 import os from 'os';
 import path from 'path';
+import mkdirp from 'mkdirp';
 
 const RANDOM_STRING = Math.random().toString().replace('.', '');
 

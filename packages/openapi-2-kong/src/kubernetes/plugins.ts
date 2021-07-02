@@ -1,3 +1,4 @@
+import { ValueOf } from 'type-fest';
 import {
   distinctByProperty,
   getPaths,
@@ -10,10 +11,9 @@ import {
 import { generateSecurityPlugins } from '../declarative-config/security-plugins';
 import { DCPlugin } from '../types/declarative-config';
 import { Plugins, IndexIncrement, ServerPlugin, PathPlugin, OperationPlugin } from '../types/k8s-plugins';
+import { PluginBase } from '../types/kong';
 import { K8sKongPlugin, K8sKongPluginBase } from '../types/kubernetes-config';
 import { OpenApi3Spec, OA3Server, OA3Paths, OA3PathItem, OA3Operation } from '../types/openapi3';
-import { ValueOf } from 'type-fest';
-import { PluginBase } from '../types/kong';
 
 export function flattenPluginDocuments(plugins: Plugins): K8sKongPlugin[] {
   const all: K8sKongPlugin[] = [];

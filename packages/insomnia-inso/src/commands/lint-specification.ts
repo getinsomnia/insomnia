@@ -1,11 +1,11 @@
-import { Spectral, isOpenApiv2, isOpenApiv3 } from '@stoplight/spectral';
-import type { GlobalOptions } from '../get-options';
-import { loadDb } from '../db';
-import { loadApiSpec, promptApiSpec } from '../db/models/api-spec';
-import { logger } from '../logger';
-import { InsoError } from '../errors';
 import fs from 'fs';
 import path from 'path';
+import { Spectral, isOpenApiv2, isOpenApiv3 } from '@stoplight/spectral';
+import { loadDb } from '../db';
+import { loadApiSpec, promptApiSpec } from '../db/models/api-spec';
+import { InsoError } from '../errors';
+import type { GlobalOptions } from '../get-options';
+import { logger } from '../logger';
 
 export type LintSpecificationOptions = GlobalOptions;
 

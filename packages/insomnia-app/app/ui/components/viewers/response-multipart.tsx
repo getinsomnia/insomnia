@@ -1,13 +1,12 @@
-import React, { PureComponent } from 'react';
-import electron, { SaveDialogOptions } from 'electron';
-import mimes from 'mime-types';
 import fs from 'fs';
-import moment from 'moment';
 import path from 'path';
 import { PassThrough } from 'stream';
-import multiparty from 'multiparty';
 import { autoBindMethodsForReact } from 'class-autobind-decorator';
-import ResponseViewer from './response-viewer';
+import electron, { SaveDialogOptions } from 'electron';
+import mimes from 'mime-types';
+import moment from 'moment';
+import multiparty from 'multiparty';
+import React, { PureComponent } from 'react';
 import {
   getContentTypeFromHeaders,
   PREVIEW_MODE_FRIENDLY,
@@ -15,9 +14,10 @@ import {
 } from '../../../common/constants';
 import type { ResponseHeader } from '../../../models/response';
 import { Dropdown, DropdownButton, DropdownItem } from '../base/dropdown/index';
-import WrapperModal from '../modals/wrapper-modal';
 import { showModal } from '../modals/index';
+import WrapperModal from '../modals/wrapper-modal';
 import ResponseHeadersViewer from './response-headers-viewer';
+import ResponseViewer from './response-viewer';
 
 interface Part {
   name: string;

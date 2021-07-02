@@ -1,13 +1,13 @@
 import { createSelector } from 'reselect';
-import * as models from '../../models';
-import { BaseModel } from '../../models';
-import { isRequest, Request } from '../../models/request';
-import { isRequestGroup, RequestGroup } from '../../models/request-group';
-import { getStatusCandidates } from '../../models/helpers/get-status-candidates';
-import { UnitTestResult } from '../../models/unit-test-result';
-import { RootState } from './modules';
 import { ValueOf } from 'type-fest';
 import { isWorkspaceActivity } from '../../common/constants';
+import * as models from '../../models';
+import { BaseModel } from '../../models';
+import { getStatusCandidates } from '../../models/helpers/get-status-candidates';
+import { isRequest, Request } from '../../models/request';
+import { isRequestGroup, RequestGroup } from '../../models/request-group';
+import { UnitTestResult } from '../../models/unit-test-result';
+import { RootState } from './modules';
 
 type EntitiesLists = {
   [K in keyof RootState['entities']]: ValueOf<RootState['entities'][K]>[];

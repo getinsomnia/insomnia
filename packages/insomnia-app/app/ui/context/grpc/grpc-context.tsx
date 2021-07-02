@@ -1,7 +1,7 @@
 import React, { createContext, FunctionComponent, ReactNode, useContext, useEffect, useReducer } from 'react';
+import type { GrpcDispatch } from './grpc-actions';
 import { grpcIpcRenderer } from './grpc-ipc-renderer';
 import { findGrpcRequestState, grpcReducer } from './grpc-reducer';
-import type { GrpcDispatch } from './grpc-actions';
 import type { GrpcRequestState, GrpcState } from './grpc-reducer';
 
 interface Props {

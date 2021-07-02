@@ -1,7 +1,7 @@
 import { createBuilder } from '@develohpanda/fluent-builder';
 import { baseModelSchema, workspaceModelSchema } from '../../../models/__schemas__/model-schemas';
-import { StageEntry } from '../../types';
 import { branchSchema, statusCandidateSchema, mergeConflictSchema } from '../../__schemas__/type-schemas';
+import { StageEntry } from '../../types';
 import {
   combinedMapKeys,
   compareBranches,

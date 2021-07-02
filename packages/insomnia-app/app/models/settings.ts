@@ -1,5 +1,3 @@
-import type { BaseModel } from './index';
-import { database as db } from '../common/database';
 import {
   getAppDefaultTheme,
   getAppDefaultLightTheme,
@@ -7,8 +5,10 @@ import {
   HttpVersions,
   UPDATE_CHANNEL_STABLE,
 } from '../common/constants';
-import * as hotkeys from '../common/hotkeys';
 import type { HttpVersion } from '../common/constants';
+import { database as db } from '../common/database';
+import * as hotkeys from '../common/hotkeys';
+import type { BaseModel } from './index';
 
 export interface PluginConfig {
   disabled: boolean;

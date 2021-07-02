@@ -1,11 +1,11 @@
+import path from 'path';
 import YAML from 'yaml';
 import { globalBeforeEach } from '../../../__jest__/before-each';
-import * as models from '../../../models';
 import { database as db } from '../../../common/database';
-import { assertAsyncError, setupDateMocks } from './util';
-import { NeDBClient } from '../ne-db-client';
-import path from 'path';
+import * as models from '../../../models';
 import { GIT_CLONE_DIR, GIT_INSOMNIA_DIR, GIT_INSOMNIA_DIR_NAME } from '../git-vcs';
+import { NeDBClient } from '../ne-db-client';
+import { assertAsyncError, setupDateMocks } from './util';
 
 describe('NeDBClient', () => {
   afterAll(() => jest.restoreAllMocks());

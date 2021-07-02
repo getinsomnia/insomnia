@@ -1,5 +1,5 @@
-import { Configuration, ProvidePlugin } from 'webpack';
 import path from 'path';
+import { Configuration, ProvidePlugin } from 'webpack';
 import pkg from '../package.json';
 
 const configuration: Configuration = {

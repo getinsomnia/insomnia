@@ -1,10 +1,10 @@
+import { difference } from 'lodash';
 import * as models from '../../../models';
 import {
   shouldIgnoreChildrenOf,
   shouldShowInSidebar,
   sortByMetaKeyOrId,
 } from '../sidebar-selectors';
-import { difference } from 'lodash';
 
 describe('shouldShowInSidebar', () => {
   const allTypes = models.types();

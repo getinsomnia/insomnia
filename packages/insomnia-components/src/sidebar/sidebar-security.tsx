@@ -1,8 +1,8 @@
 import React, { Component, Fragment, ReactNode } from 'react';
-import { SidebarItem } from './sidebar-item';
 import { SvgIcon, IconEnum } from '../svg-icon';
-import { SidebarSection } from './sidebar-section';
 import { SidebarInvalidSection } from './sidebar-invalid-section';
+import { SidebarItem } from './sidebar-item';
+import { SidebarSection } from './sidebar-section';
 
 export interface SidebarSecurityProps {
   security: Record<string, any>;

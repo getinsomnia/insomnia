@@ -1,6 +1,6 @@
-import type { PluginArgumentEnumOption } from './extensions';
 import objectPath from 'objectpath';
 import type { PluginStore } from '../plugins/context';
+import type { PluginArgumentEnumOption } from './extensions';
 
 export interface NunjucksParsedTagArg {
   type: 'string' | 'number' | 'boolean' | 'variable' | 'expression' | 'enum' | 'file' | 'model';

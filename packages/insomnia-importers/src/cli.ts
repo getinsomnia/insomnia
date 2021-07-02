@@ -1,8 +1,8 @@
-import program from 'commander';
-import path from 'path';
-import { convert } from './convert';
 import fs from 'fs';
+import path from 'path';
+import program from 'commander';
 import { version } from '../package.json';
+import { convert } from './convert';
 
 export const go = async () => {
   // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ //

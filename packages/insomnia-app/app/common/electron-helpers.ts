@@ -1,7 +1,7 @@
-import * as electron from 'electron';
 import { join } from 'path';
-import appConfig from '../../config/config.json';
+import * as electron from 'electron';
 import mkdirp from 'mkdirp';
+import appConfig from '../../config/config.json';
 
 export function clickLink(href: string) {
   const { protocol } = new URL(href);

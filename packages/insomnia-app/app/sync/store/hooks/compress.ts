@@ -1,5 +1,5 @@
-import type { HookFn } from '../index';
 import zlib from 'zlib';
+import type { HookFn } from '../index';
 
 const read: HookFn = async function read(extension: string, value: Buffer) {
   if (extension) {

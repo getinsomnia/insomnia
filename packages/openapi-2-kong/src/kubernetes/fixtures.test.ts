@@ -1,6 +1,6 @@
-import YAML from 'yaml';
 import { promises, readdirSync } from 'fs';
 import path from 'path';
+import YAML from 'yaml';
 import { generate } from '../generate';
 import { KongForKubernetesResult } from '../types/outputs';
 const { readFile } = promises;

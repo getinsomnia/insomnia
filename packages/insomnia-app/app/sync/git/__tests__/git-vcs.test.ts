@@ -1,8 +1,8 @@
-import { GitVCS, GIT_CLONE_DIR, GIT_INSOMNIA_DIR } from '../git-vcs';
-import { setupDateMocks } from './util';
-import { MemClient } from '../mem-client';
 import path from 'path';
 import * as git from 'isomorphic-git';
+import { GitVCS, GIT_CLONE_DIR, GIT_INSOMNIA_DIR } from '../git-vcs';
+import { MemClient } from '../mem-client';
+import { setupDateMocks } from './util';
 
 describe('Git-VCS', () => {
   let fooTxt = '';

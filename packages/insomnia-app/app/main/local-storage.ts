@@ -1,6 +1,6 @@
-import mkdirp from 'mkdirp';
 import fs from 'fs';
 import path from 'path';
+import mkdirp from 'mkdirp';
 
 class LocalStorage {
   _buffer: Record<string, string> = {};

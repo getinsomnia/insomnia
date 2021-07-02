@@ -1,9 +1,9 @@
 import fs from 'fs';
-import YAML from 'yaml';
 import path from 'path';
+import YAML from 'yaml';
+import { UNKNOWN } from '../../types';
 import { emptyDb } from '../index';
 import type { Database, DbAdapter } from '../index';
-import { UNKNOWN } from '../../types';
 
 const gitAdapter: DbAdapter = async (dir, filterTypes) => {
   dir = path.join(dir, '.insomnia'); // Sanity check - do model directories exist?

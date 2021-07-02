@@ -1,7 +1,7 @@
+import fs from 'fs';
+import path from 'path';
 import * as models from '../../../models';
 import type { ProtoDirectory } from '../../../models/proto-directory';
-import path from 'path';
-import fs from 'fs';
 
 interface IngestResult {
   createdDir?: ProtoDirectory | null;

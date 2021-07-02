@@ -1,7 +1,7 @@
-import { generateGlobalPlugins, generateRequestValidatorPlugin, ALLOW_ALL_SCHEMA } from './plugins';
-import { OA3Operation, OA3Parameter } from '../types/openapi3';
 import { ParameterSchema, RequestTerminationPlugin, RequestValidatorPlugin, xKongPluginKeyAuth, xKongPluginRequestTermination, xKongPluginRequestValidator } from '../types/kong';
+import { OA3Operation, OA3Parameter } from '../types/openapi3';
 import { getSpec, pluginDummy, UserDCPlugin, tags } from './jest/test-helpers';
+import { generateGlobalPlugins, generateRequestValidatorPlugin, ALLOW_ALL_SCHEMA } from './plugins';
 
 describe('plugins', () => {
   describe('generateGlobalPlugins()', () => {

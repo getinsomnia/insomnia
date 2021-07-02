@@ -1,7 +1,7 @@
+import { boolean, text, withKnobs } from '@storybook/addon-knobs';
 import React from 'react';
 import { Card } from './card';
 import { CardContainer } from './card-container';
-import { boolean, text, withKnobs } from '@storybook/addon-knobs';
 import { SvgIcon, IconEnum } from './svg-icon';
 
 export default {

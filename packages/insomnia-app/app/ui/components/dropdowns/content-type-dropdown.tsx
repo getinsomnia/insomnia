@@ -1,5 +1,6 @@
-import React, { PureComponent } from 'react';
 import { autoBindMethodsForReact } from 'class-autobind-decorator';
+import React, { PureComponent } from 'react';
+import { trackEvent } from '../../../common/analytics';
 import {
   AUTOBIND_CFG,
   CONTENT_TYPE_FILE,
@@ -13,12 +14,11 @@ import {
   CONTENT_TYPE_EDN,
   getContentTypeName,
 } from '../../../common/constants';
-import { Dropdown, DropdownButton, DropdownDivider, DropdownItem } from '../base/dropdown';
-import { showModal } from '../modals/index';
-import AlertModal from '../modals/alert-modal';
 import type { Request, RequestBody } from '../../../models/request';
-import { trackEvent } from '../../../common/analytics';
+import { Dropdown, DropdownButton, DropdownDivider, DropdownItem } from '../base/dropdown';
 import { DropdownProps } from '../base/dropdown/dropdown';
+import AlertModal from '../modals/alert-modal';
+import { showModal } from '../modals/index';
 
 interface Props extends DropdownProps {
   onChange: (mimeType: string | null) => void;

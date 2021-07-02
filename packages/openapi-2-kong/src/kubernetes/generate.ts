@@ -1,11 +1,11 @@
-import { getMethodAnnotationName, getName, HttpMethodType, parseUrl } from '../common';
 import urlJoin from 'url-join';
-import { flattenPluginDocuments, getPlugins, prioritizePlugins } from './plugins';
-import { pathVariablesToWildcard, resolveUrlVariables } from './variables';
+import { getMethodAnnotationName, getName, HttpMethodType, parseUrl } from '../common';
 import { IndexIncrement } from '../types/k8s-plugins';
 import { K8sIngress, K8sKongIngress, K8sMetadata, K8sAnnotations, K8sIngressRule, K8sHTTPIngressPath, K8sIngressBackend } from '../types/kubernetes-config';
 import { OpenApi3Spec, OA3Server } from '../types/openapi3';
 import { KongForKubernetesResult } from '../types/outputs';
+import { flattenPluginDocuments, getPlugins, prioritizePlugins } from './plugins';
+import { pathVariablesToWildcard, resolveUrlVariables } from './variables';
 
 interface CustomAnnotations {
   pluginNames: string[];

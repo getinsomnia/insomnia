@@ -1,7 +1,7 @@
-import * as models from '../../../../models';
-import ingestProtoDirectory from '../ingest-proto-directory';
 import path from 'path';
 import { globalBeforeEach } from '../../../../__jest__/before-each';
+import * as models from '../../../../models';
+import ingestProtoDirectory from '../ingest-proto-directory';
 
 describe('ingestProtoDirectory', () => {
   beforeEach(globalBeforeEach);

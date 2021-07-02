@@ -1,18 +1,18 @@
 import configureMockStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import { globalBeforeEach } from '../../../../__jest__/before-each';
-import { createWorkspace } from '../workspace';
-import { Workspace, WorkspaceScope, WorkspaceScopeKeys } from '../../../../models/workspace';
-import * as models from '../../../../models';
 import { trackEvent, trackSegmentEvent } from '../../../../common/analytics';
 import { ACTIVITY_DEBUG, ACTIVITY_SPEC } from '../../../../common/constants';
-import { SET_ACTIVE_ACTIVITY, SET_ACTIVE_WORKSPACE } from '../global';
-import { getAndClearShowPromptMockArgs } from '../../../../test-utils';
 import { database } from '../../../../common/database';
-import { Environment } from '../../../../models/environment';
-import { CookieJar } from '../../../../models/cookie-jar';
-import { WorkspaceMeta } from '../../../../models/workspace-meta';
+import * as models from '../../../../models';
 import { ApiSpec } from '../../../../models/api-spec';
+import { CookieJar } from '../../../../models/cookie-jar';
+import { Environment } from '../../../../models/environment';
+import { Workspace, WorkspaceScope, WorkspaceScopeKeys } from '../../../../models/workspace';
+import { WorkspaceMeta } from '../../../../models/workspace-meta';
+import { getAndClearShowPromptMockArgs } from '../../../../test-utils';
+import { SET_ACTIVE_ACTIVITY, SET_ACTIVE_WORKSPACE } from '../global';
+import { createWorkspace } from '../workspace';
 
 jest.mock('../../../components/modals');
 jest.mock('../../../../common/analytics');

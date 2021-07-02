@@ -1,8 +1,8 @@
+import path from 'path';
 import * as git from 'isomorphic-git';
 import { trackEvent } from '../../common/analytics';
 import { httpClient } from './http-client';
 import { convertToOsSep, convertToPosixSep } from './path-sep';
-import path from 'path';
 import { gitCallbacks } from './utils';
 
 export interface GitAuthor {

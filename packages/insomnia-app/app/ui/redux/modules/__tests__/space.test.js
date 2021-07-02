@@ -1,13 +1,13 @@
 import configureMockStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import { globalBeforeEach } from '../../../../__jest__/before-each';
-import { createSpace, removeSpace } from '../space';
-import * as models from '../../../../models';
 import { trackEvent, trackSegmentEvent } from '../../../../common/analytics';
 import { ACTIVITY_HOME } from '../../../../common/constants';
-import { SET_ACTIVE_ACTIVITY, SET_ACTIVE_SPACE } from '../global';
-import { getAndClearShowAlertMockArgs, getAndClearShowPromptMockArgs } from '../../../../test-utils';
+import * as models from '../../../../models';
 import { BASE_SPACE_ID } from '../../../../models/space';
+import { getAndClearShowAlertMockArgs, getAndClearShowPromptMockArgs } from '../../../../test-utils';
+import { SET_ACTIVE_ACTIVITY, SET_ACTIVE_SPACE } from '../global';
+import { createSpace, removeSpace } from '../space';
 
 jest.mock('../../../components/modals');
 jest.mock('../../../../common/analytics');

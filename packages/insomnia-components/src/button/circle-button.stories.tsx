@@ -1,8 +1,8 @@
-import React from 'react';
 import { number, select, withKnobs } from '@storybook/addon-knobs';
+import React from 'react';
 import { SvgIcon, IconEnum } from '../svg-icon';
-import { CircleButton } from './circle-button';
 import { ButtonThemeEnum, ButtonVariantEnum } from './button';
+import { CircleButton } from './circle-button';
 
 export default {
   title: 'Buttons | Circle Button',

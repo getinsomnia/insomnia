@@ -7,16 +7,16 @@ import {
   HttpMethod,
   parseUrl,
 } from '../common';
-import { generateSecurityPlugins } from './security-plugins';
+import { DCService, DCRoute } from '../types/declarative-config';
+import { xKongName, xKongServiceDefaults } from '../types/kong';
+import { OpenApi3Spec, OA3Server, OA3PathItem } from '../types/openapi3';
 import {
   generateOperationPlugins,
   generateGlobalPlugins,
   getRequestValidatorPluginDirective,
   generatePlugins,
 } from './plugins';
-import { DCService, DCRoute } from '../types/declarative-config';
-import { OpenApi3Spec, OA3Server, OA3PathItem } from '../types/openapi3';
-import { xKongName, xKongServiceDefaults } from '../types/kong';
+import { generateSecurityPlugins } from './security-plugins';
 
 export function generateServices(api: OpenApi3Spec, tags: string[]) {
   const servers = getAllServers(api);

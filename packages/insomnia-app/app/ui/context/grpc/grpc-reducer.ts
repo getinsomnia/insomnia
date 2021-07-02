@@ -1,3 +1,5 @@
+import { ServiceError, StatusObject } from '@grpc/grpc-js';
+import type { GrpcMethodDefinition } from '../../../network/grpc/method';
 import type {
   ErrorAction,
   GrpcAction,
@@ -9,8 +11,6 @@ import type {
   StatusAction,
 } from './grpc-actions';
 import { GrpcActionTypeEnum } from './grpc-actions';
-import type { GrpcMethodDefinition } from '../../../network/grpc/method';
-import { ServiceError, StatusObject } from '@grpc/grpc-js';
 
 export interface GrpcRequestState {
   running: boolean;

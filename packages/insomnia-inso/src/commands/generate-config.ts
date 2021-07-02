@@ -1,12 +1,12 @@
+import path from 'path';
 import { ConversionResult, ConversionResultType, DeclarativeConfig, generate, generateFromString, K8sManifest } from 'openapi-2-kong';
 import YAML from 'yaml';
-import path from 'path';
-import type { GlobalOptions } from '../get-options';
 import { loadDb } from '../db';
 import { loadApiSpec, promptApiSpec } from '../db/models/api-spec';
-import { writeFileWithCliOptions } from '../write-file';
-import { logger } from '../logger';
 import { InsoError } from '../errors';
+import type { GlobalOptions } from '../get-options';
+import { logger } from '../logger';
+import { writeFileWithCliOptions } from '../write-file';
 
 export type ConversionOption = 'kubernetes' | 'declarative';
 

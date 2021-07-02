@@ -1,10 +1,10 @@
-import path from 'path';
-import os from 'os';
 import fs from 'fs';
-import * as models from '../../../../models';
-import { globalBeforeEach } from '../../../../__jest__/before-each';
-import writeProtoFile from '../write-proto-file';
+import os from 'os';
+import path from 'path';
 import mkdirp from 'mkdirp';
+import { globalBeforeEach } from '../../../../__jest__/before-each';
+import * as models from '../../../../models';
+import writeProtoFile from '../write-proto-file';
 
 describe('writeProtoFile', () => {
   let existsSyncSpy: jest.SpyInstance<any, any>;

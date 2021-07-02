@@ -1,6 +1,8 @@
+import fs from 'fs';
 import configureMockStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import { globalBeforeEach } from '../../../../__jest__/before-each';
+import { trackEvent } from '../../../../common/analytics';
 import {
   ACTIVITY_ANALYTICS,
   GlobalActivity,
@@ -12,7 +14,9 @@ import {
   ACTIVITY_UNIT_TEST,
   DEPRECATED_ACTIVITY_INSOMNIA,
 } from '../../../../common/constants';
-import { trackEvent } from '../../../../common/analytics';
+import { getDesignerDataDir } from '../../../../common/electron-helpers';
+import * as models from '../../../../models';
+import { BASE_SPACE_ID } from '../../../../models/space';
 import {
   goToNextActivity,
   initActiveActivity,
@@ -26,10 +30,6 @@ import {
   setActiveSpace,
   initActiveSpace,
 } from '../global';
-import * as models from '../../../../models';
-import fs from 'fs';
-import { getDesignerDataDir } from '../../../../common/electron-helpers';
-import { BASE_SPACE_ID } from '../../../../models/space';
 
 jest.mock('../../../../common/analytics');
 

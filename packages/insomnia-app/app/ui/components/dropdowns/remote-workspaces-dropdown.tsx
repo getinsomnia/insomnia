@@ -1,12 +1,12 @@
-import React, { FC } from 'react';
-import { VCS } from '../../../sync/vcs/vcs';
 import { Dropdown, DropdownDivider, DropdownItem, Button, Tooltip } from 'insomnia-components';
-import HelpTooltip from '../help-tooltip';
-import { strings } from '../../../common/strings';
-import { isLoggedIn } from '../../../account/session';
-import { useRemoteWorkspaces } from '../../hooks/workspace';
+import React, { FC } from 'react';
 import { useSelector } from 'react-redux';
+import { isLoggedIn } from '../../../account/session';
+import { strings } from '../../../common/strings';
+import { VCS } from '../../../sync/vcs/vcs';
+import { useRemoteWorkspaces } from '../../hooks/workspace';
 import { selectActiveSpace } from '../../redux/selectors';
+import HelpTooltip from '../help-tooltip';
 
 interface Props {
   className?: string;

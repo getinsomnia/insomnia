@@ -1,9 +1,9 @@
-import fs from 'fs';
 import path from 'path';
 import NeDB from 'nedb';
-import { UNKNOWN, UNKNOWN_OBJ } from '../../types';
-import { Database, DbAdapter, emptyDb } from '../index';
 import type { BaseModel } from '../models/types';
+import { Database, DbAdapter, emptyDb } from '../index';
+import fs from 'fs';
+import { UNKNOWN, UNKNOWN_OBJ } from '../../types';
 
 const neDbAdapter: DbAdapter = async (dir, filterTypes) => {
   // Sanity check - do db files exist?

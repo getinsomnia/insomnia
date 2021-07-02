@@ -1,16 +1,16 @@
-import { autoBindMethodsForReact } from 'class-autobind-decorator';
-import HTTPSnippet, { availableTargets } from 'httpsnippet';
 import React, { PureComponent } from 'react';
+import { autoBindMethodsForReact } from 'class-autobind-decorator';
 import { AUTOBIND_CFG } from '../../../common/constants';
-import { exportHarRequest } from '../../../common/har';
+import HTTPSnippet, { availableTargets } from 'httpsnippet';
 import CopyButton from '../base/copy-button';
 import { Dropdown, DropdownButton, DropdownItem } from '../base/dropdown';
-import Link from '../base/link';
+import CodeEditor from '../codemirror/code-editor';
 import Modal from '../base/modal';
 import ModalBody from '../base/modal-body';
-import ModalFooter from '../base/modal-footer';
 import ModalHeader from '../base/modal-header';
-import CodeEditor from '../codemirror/code-editor';
+import ModalFooter from '../base/modal-footer';
+import { exportHarRequest } from '../../../common/har';
+import Link from '../base/link';
 
 const DEFAULT_TARGET = availableTargets().find(t => t.key === 'shell');
 const DEFAULT_CLIENT = DEFAULT_TARGET.clients.find(t => t.key === 'curl');

@@ -1,8 +1,8 @@
 import { parse as urlParse } from 'url';
-import axios from 'axios';
 import { setDefaultProtocol } from 'insomnia-url';
-import { isDevelopment } from '../common/constants';
+import axios from 'axios';
 import * as models from '../models';
+import { isDevelopment } from '../common/constants';
 
 export async function axiosRequest(config) {
   const settings = await models.settings.getOrCreate();

@@ -1,10 +1,10 @@
+import React, { Fragment, PureComponent } from 'react';
 import { autoBindMethodsForReact } from 'class-autobind-decorator';
 import { Button } from 'insomnia-components';
-import React, { Fragment, PureComponent } from 'react';
-import { AUTOBIND_CFG, getAppLongName } from '../../common/constants';
 import * as models from '../../models';
-import chartSrc from '../images/chart.svg';
+import { AUTOBIND_CFG, getAppLongName } from '../../common/constants';
 import type { WrapperProps } from './wrapper';
+import chartSrc from '../images/chart.svg';
 
 interface Props {
   wrapperProps: WrapperProps;

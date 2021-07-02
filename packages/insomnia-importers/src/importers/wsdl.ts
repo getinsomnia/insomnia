@@ -1,3 +1,4 @@
+import * as postman from './postman';
 import {
   getJsonForWSDL,
   getWSDLServices,
@@ -7,7 +8,6 @@ import {
 } from 'apiconnect-wsdl';
 import { get } from 'lodash';
 import { Converter } from '../entities';
-import * as postman from './postman';
 
 export const id = 'wsdl';
 export const name = 'WSDL';

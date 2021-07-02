@@ -1,9 +1,9 @@
-import { autoBindMethodsForReact } from 'class-autobind-decorator';
-import orderedJSON from 'json-order';
 import React, { PureComponent } from 'react';
+import { autoBindMethodsForReact } from 'class-autobind-decorator';
 import { AUTOBIND_CFG, JSON_ORDER_PREFIX, JSON_ORDER_SEPARATOR } from '../../../common/constants';
-import { NUNJUCKS_TEMPLATE_GLOBAL_PROPERTY_NAME } from '../../../templating';
 import CodeEditor from '../codemirror/code-editor';
+import orderedJSON from 'json-order';
+import { NUNJUCKS_TEMPLATE_GLOBAL_PROPERTY_NAME } from '../../../templating';
 // NeDB field names cannot begin with '$' or contain a period '.'
 // Docs: https://github.com/DeNA/nedb#inserting-documents
 const INVALID_NEDB_KEY_REGEX = /^\$|\./;

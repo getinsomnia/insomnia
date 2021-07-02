@@ -1,7 +1,7 @@
 import React, { FunctionComponent } from 'react';
-import { HandleGetRenderContext, HandleRender } from '../../../common/render';
-import type { Settings } from '../../../models/settings';
 import CodeEditor from '../codemirror/code-editor';
+import type { Settings } from '../../../models/settings';
+import { HandleGetRenderContext, HandleRender } from '../../../common/render';
 
 interface Props {
   content?: string;

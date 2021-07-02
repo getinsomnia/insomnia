@@ -1,5 +1,5 @@
-import { autoBindMethodsForReact } from 'class-autobind-decorator';
 import React, { ButtonHTMLAttributes, PureComponent, ReactNode } from 'react';
+import { autoBindMethodsForReact } from 'class-autobind-decorator';
 import { AUTOBIND_CFG } from '../../../common/constants';
 
 export interface ButtonProps<T> {

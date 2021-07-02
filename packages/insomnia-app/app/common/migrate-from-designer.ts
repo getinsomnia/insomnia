@@ -1,16 +1,16 @@
-import fs from 'fs';
-import fsPath from 'path';
-import fsx from 'fs-extra';
-import { difference } from 'lodash';
 import NeDB from 'nedb';
 import type { BaseModel } from '../models';
+import fsPath from 'path';
+import fs from 'fs';
 import * as models from '../models';
-import { getModelName } from '../models';
-import type { Settings } from '../models/settings';
-import type { Workspace } from '../models/workspace';
-import { WorkspaceScopeKeys } from '../models/workspace';
-import { trackEvent } from './analytics';
 import { database as db } from './database';
+import { getModelName } from '../models';
+import { difference } from 'lodash';
+import type { Workspace } from '../models/workspace';
+import type { Settings } from '../models/settings';
+import fsx from 'fs-extra';
+import { trackEvent } from './analytics';
+import { WorkspaceScopeKeys } from '../models/workspace';
 
 async function loadDesignerDb(
   types: string[],

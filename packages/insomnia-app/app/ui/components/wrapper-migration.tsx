@@ -1,14 +1,14 @@
-import { ToggleSwitch, Button } from 'insomnia-components';
 import React, { FunctionComponent, useCallback, useMemo, useState } from 'react';
-import { useDispatch } from 'react-redux';
-import { trackEvent } from '../../common/analytics';
-import { getDataDirectory, getDesignerDataDir, restartApp } from '../../common/electron-helpers';
+import type { WrapperProps } from './wrapper';
+import { ToggleSwitch, Button } from 'insomnia-components';
 import type { MigrationOptions } from '../../common/migrate-from-designer';
 import migrateFromDesigner, { existsAndIsDirectory } from '../../common/migrate-from-designer';
+import { getDataDirectory, getDesignerDataDir, restartApp } from '../../common/electron-helpers';
+import { useDispatch } from 'react-redux';
+import OnboardingContainer from './onboarding-container';
 import { goToNextActivity } from '../redux/modules/global';
 import HelpTooltip from './help-tooltip';
-import OnboardingContainer from './onboarding-container';
-import type { WrapperProps } from './wrapper';
+import { trackEvent } from '../../common/analytics';
 
 type Step = 'options' | 'migrating' | 'results';
 

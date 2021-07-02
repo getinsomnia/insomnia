@@ -1,6 +1,6 @@
-import path from 'path';
 import commander from 'commander';
 import { getOptions, extractCommandOptions, loadCosmiConfig } from './get-options';
+import path from 'path';
 import { noop } from './util';
 
 jest.unmock('cosmiconfig');

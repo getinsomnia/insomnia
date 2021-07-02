@@ -1,10 +1,10 @@
-import { autoBindMethodsForReact } from 'class-autobind-decorator';
 import React, { PureComponent } from 'react';
+import { autoBindMethodsForReact } from 'class-autobind-decorator';
 import { AUTOBIND_CFG } from '../../../common/constants';
-import { HandleGetRenderContext, HandleRender } from '../../../common/render';
-import type { Request, RequestParameter } from '../../../models/request';
-import CodeEditor from '../codemirror/code-editor';
 import KeyValueEditor from '../key-value-editor/editor';
+import CodeEditor from '../codemirror/code-editor';
+import type { Request, RequestParameter } from '../../../models/request';
+import { HandleGetRenderContext, HandleRender } from '../../../common/render';
 
 interface Props {
   onChange: (r: Request, parameters: RequestParameter[]) => Promise<Request>;

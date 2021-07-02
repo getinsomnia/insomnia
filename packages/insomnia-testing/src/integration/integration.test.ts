@@ -1,7 +1,7 @@
-import _axios from 'axios';
-import { AxiosMock } from '../__mocks__/axios';
 import { generate } from '../generate';
 import { runTests } from '../run';
+import _axios from 'axios';
+import { AxiosMock } from '../__mocks__/axios';
 
 const axios = _axios as AxiosMock;
 

@@ -1,5 +1,5 @@
-import { globalBeforeEach } from '../../__jest__/before-each';
 import * as misc from '../misc';
+import { globalBeforeEach } from '../../__jest__/before-each';
 import {
   diffPatchObj,
   isNotNullOrUndefined,

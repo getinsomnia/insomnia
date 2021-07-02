@@ -1,4 +1,3 @@
-import { autoBindMethodsForReact } from 'class-autobind-decorator';
 import React, { PureComponent } from 'react';
 import {
   AUTH_BASIC,
@@ -13,20 +12,21 @@ import {
   AUTH_ASAP,
   AUTOBIND_CFG,
 } from '../../../../common/constants';
-import { HandleGetRenderContext, HandleRender } from '../../../../common/render';
-import type { OAuth2Token } from '../../../../models/o-auth-2-token';
-import type { Request, RequestAuthentication } from '../../../../models/request';
-import type { Settings } from '../../../../models/settings';
-import AsapAuth from './asap-auth';
-import AWSAuth from './aws-auth';
 import BasicAuth from './basic-auth';
-import BearerAuth from './bearer-auth';
 import DigestAuth from './digest-auth';
-import HawkAuth from './hawk-auth';
-import NetrcAuth from './netrc-auth';
+import BearerAuth from './bearer-auth';
 import NTLMAuth from './ntlm-auth';
-import OAuth1Auth from './o-auth-1-auth';
 import OAuth2Auth from './o-auth-2-auth';
+import OAuth1Auth from './o-auth-1-auth';
+import HawkAuth from './hawk-auth';
+import AWSAuth from './aws-auth';
+import NetrcAuth from './netrc-auth';
+import AsapAuth from './asap-auth';
+import { autoBindMethodsForReact } from 'class-autobind-decorator';
+import type { Request, RequestAuthentication } from '../../../../models/request';
+import type { OAuth2Token } from '../../../../models/o-auth-2-token';
+import type { Settings } from '../../../../models/settings';
+import { HandleGetRenderContext, HandleRender } from '../../../../common/render';
 
 interface Props {
   handleRender: HandleRender;

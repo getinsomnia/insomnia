@@ -1,12 +1,7 @@
+import React, { PureComponent, ReactNode } from 'react';
 import { autoBindMethodsForReact } from 'class-autobind-decorator';
 import { OpenDialogOptions, remote } from 'electron';
-import React, { PureComponent, ReactNode } from 'react';
 import { DEBOUNCE_MILLIS, AUTOBIND_CFG, isMac } from '../../common/constants';
-import type { HotKeyRegistry } from '../../common/hotkeys';
-import { hotKeyRefs } from '../../common/hotkeys';
-import { executeHotKey } from '../../common/hotkeys-listener';
-import { HandleGetRenderContext, HandleRender } from '../../common/render';
-import type { Request } from '../../models/request';
 import {
   DropdownButton,
   DropdownDivider,
@@ -14,11 +9,16 @@ import {
   DropdownItem,
 } from './base/dropdown';
 import Dropdown from './base/dropdown/dropdown';
+import { showPrompt } from './modals/index';
+import MethodDropdown from './dropdowns/method-dropdown';
 import PromptButton from './base/prompt-button';
 import OneLineEditor from './codemirror/one-line-editor';
-import MethodDropdown from './dropdowns/method-dropdown';
 import KeydownBinder from './keydown-binder';
-import { showPrompt } from './modals/index';
+import type { Request } from '../../models/request';
+import type { HotKeyRegistry } from '../../common/hotkeys';
+import { hotKeyRefs } from '../../common/hotkeys';
+import { executeHotKey } from '../../common/hotkeys-listener';
+import { HandleGetRenderContext, HandleRender } from '../../common/render';
 
 interface Props {
   handleAutocompleteUrls: Function;

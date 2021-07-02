@@ -1,8 +1,8 @@
-import { trackEvent } from '../../../common/analytics';
+import PromptModal, { PromptModalOptions } from './prompt-modal';
 import AlertModal from './alert-modal';
 import ErrorModal from './error-modal';
+import { trackEvent } from '../../../common/analytics';
 import type { ErrorModalOptions } from './error-modal';
-import PromptModal, { PromptModalOptions } from './prompt-modal';
 
 const modals = {};
 

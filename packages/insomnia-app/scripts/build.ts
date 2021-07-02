@@ -1,15 +1,15 @@
-import childProcess from 'child_process';
-import { readFileSync, writeFileSync, promises } from 'fs';
-import path from 'path';
-import licenseChecker from 'license-checker';
-import mkdirp from 'mkdirp';
-import { ncp } from 'ncp';
-import rimraf from 'rimraf';
-import webpack from 'webpack';
 import appConfig from '../config/config.json';
-import electronWebpackConfig from '../webpack/webpack.config.electron';
-import productionWebpackConfig from '../webpack/webpack.config.production';
+import childProcess from 'child_process';
+import webpack from 'webpack';
+import licenseChecker from 'license-checker';
+import rimraf from 'rimraf';
+import { ncp } from 'ncp';
+import path from 'path';
+import mkdirp from 'mkdirp';
+import { readFileSync, writeFileSync, promises } from 'fs';
 import { getBuildContext } from './getBuildContext';
+import productionWebpackConfig from '../webpack/webpack.config.production';
+import electronWebpackConfig from '../webpack/webpack.config.electron';
 
 const { readFile, writeFile } = promises;
 

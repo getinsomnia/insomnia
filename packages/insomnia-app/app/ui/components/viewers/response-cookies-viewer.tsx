@@ -1,7 +1,7 @@
-import { autoBindMethodsForReact } from 'class-autobind-decorator';
 import React, { PureComponent } from 'react';
-import { Cookie } from 'tough-cookie';
+import { autoBindMethodsForReact } from 'class-autobind-decorator';
 import { AUTOBIND_CFG } from '../../../common/constants';
+import { Cookie } from 'tough-cookie';
 
 interface Props {
   showCookiesModal: Function;

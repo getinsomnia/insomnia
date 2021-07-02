@@ -1,11 +1,11 @@
 /* eslint-disable camelcase */
-import { withKnobs } from '@storybook/addon-knobs';
 import React, { useState } from 'react';
-import { withDesign } from 'storybook-addon-designs';
-import { SvgIcon } from '../svg-icon';
 import { Sidebar } from './sidebar';
-import { SidebarBadge } from './sidebar-badge';
 import { SidebarItem } from './sidebar-item';
+import { SidebarBadge } from './sidebar-badge';
+import { SvgIcon } from '../svg-icon';
+import { withKnobs } from '@storybook/addon-knobs';
+import { withDesign } from 'storybook-addon-designs';
 
 export default {
   title: 'Navigation | Sidebar',

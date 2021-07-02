@@ -1,16 +1,16 @@
-import * as electron from 'electron';
 import React from 'react';
-import * as analytics from '../../../app/common/analytics';
-import { axiosRequest as axios } from '../../../app/network/axios-request';
+import * as electron from 'electron';
+import { showAlert, showModal, showPrompt } from '../../ui/components/modals';
 import type { RenderPurpose } from '../../common/render';
 import {
   RENDER_PURPOSE_GENERAL,
   RENDER_PURPOSE_NO_RENDER,
   RENDER_PURPOSE_SEND,
 } from '../../common/render';
-import HtmlElementWrapper from '../../ui/components/html-element-wrapper';
-import { showAlert, showModal, showPrompt } from '../../ui/components/modals';
 import WrapperModal from '../../ui/components/modals/wrapper-modal';
+import HtmlElementWrapper from '../../ui/components/html-element-wrapper';
+import { axiosRequest as axios } from '../../../app/network/axios-request';
+import * as analytics from '../../../app/common/analytics';
 
 export function init(renderPurpose: RenderPurpose = RENDER_PURPOSE_GENERAL): {
   app: Record<string, any>;

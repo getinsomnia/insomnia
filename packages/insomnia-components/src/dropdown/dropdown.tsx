@@ -1,6 +1,3 @@
-import { autoBindMethodsForReact } from 'class-autobind-decorator';
-import classnames from 'classnames';
-import fuzzySort from 'fuzzysort';
 import React, {
   CSSProperties,
   Fragment,
@@ -11,10 +8,13 @@ import React, {
   ReactPortal,
 } from 'react';
 import ReactDOM from 'react-dom';
+import fuzzySort from 'fuzzysort';
+import { autoBindMethodsForReact } from 'class-autobind-decorator';
+import classnames from 'classnames';
+import { DropdownItem } from './dropdown-item';
+import { DropdownDivider } from './dropdown-divider';
 import styled, { css } from 'styled-components';
 import { SvgIcon } from '../svg-icon';
-import { DropdownDivider } from './dropdown-divider';
-import { DropdownItem } from './dropdown-item';
 
 export interface DropdownProps {
   children: ReactNode;

@@ -1,17 +1,17 @@
-import crypto from 'crypto';
-import fs from 'fs';
-import { join as pathJoin } from 'path';
-import { parse as urlParse, resolve as urlResolve } from 'url';
-import aws4 from 'aws4';
-import clone from 'clone';
-import { cookiesFromJar, jarFromCookies } from 'insomnia-cookies';
+import type { ResponseHeader, ResponseTimelineEntry } from '../models/response';
+import type { Request, RequestHeader } from '../models/request';
+import { isWorkspace, Workspace } from '../models/workspace';
+import type { Settings } from '../models/settings';
+import type { ExtraRenderInfo, RenderedRequest } from '../common/render';
 import {
-  buildQueryStringFromParams,
-  joinUrlAndQueryString,
-  setDefaultProtocol,
-  smartEncodeUrl,
-} from 'insomnia-url';
+  getRenderedRequestAndContext,
+  RENDER_PURPOSE_NO_RENDER,
+  RENDER_PURPOSE_SEND,
+} from '../common/render';
 import mkdirp from 'mkdirp';
+import crypto from 'crypto';
+import clone from 'clone';
+import { parse as urlParse, resolve as urlResolve } from 'url';
 import {
   Curl,
   CurlAuth,
@@ -21,7 +21,9 @@ import {
   CurlNetrc,
   CurlHttpVersion,
 } from 'node-libcurl';
+import { join as pathJoin } from 'path';
 import * as uuid from 'uuid';
+import * as models from '../models';
 import {
   AUTH_AWS_IAM,
   AUTH_DIGEST,
@@ -33,8 +35,6 @@ import {
   HttpVersions,
   STATUS_CODE_PLUGIN_ERROR,
 } from '../common/constants';
-import { database as db } from '../common/database';
-import { getDataDirectory, getTempDir } from '../common/electron-helpers';
 import {
   delay,
   describeByteSize,
@@ -49,24 +49,24 @@ import {
   hasUserAgentHeader,
   waitForStreamToFinish,
 } from '../common/misc';
-import type { ExtraRenderInfo, RenderedRequest } from '../common/render';
+import { getDataDirectory, getTempDir } from '../common/electron-helpers';
 import {
-  getRenderedRequestAndContext,
-  RENDER_PURPOSE_NO_RENDER,
-  RENDER_PURPOSE_SEND,
-} from '../common/render';
-import * as models from '../models';
-import type { Environment } from '../models/environment';
-import type { Request, RequestHeader } from '../models/request';
-import type { ResponseHeader, ResponseTimelineEntry } from '../models/response';
-import type { Settings } from '../models/settings';
-import { isWorkspace, Workspace } from '../models/workspace';
-import * as pluginContexts from '../plugins/context/index';
-import * as plugins from '../plugins/index';
-import { getAuthHeader } from './authentication';
+  buildQueryStringFromParams,
+  joinUrlAndQueryString,
+  setDefaultProtocol,
+  smartEncodeUrl,
+} from 'insomnia-url';
+import fs from 'fs';
+import { database as db } from '../common/database';
 import caCerts from './ca-certs';
-import { buildMultipart } from './multipart';
+import * as plugins from '../plugins/index';
+import * as pluginContexts from '../plugins/context/index';
+import { getAuthHeader } from './authentication';
+import { cookiesFromJar, jarFromCookies } from 'insomnia-cookies';
 import { urlMatchesCertHost } from './url-matches-cert-host';
+import aws4 from 'aws4';
+import { buildMultipart } from './multipart';
+import type { Environment } from '../models/environment';
 
 export interface ResponsePatch {
   bodyCompression?: 'zip' | null;

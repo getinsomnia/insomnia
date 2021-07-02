@@ -1,6 +1,6 @@
 import { OA3SecurityScheme } from '../types/openapi3';
-import { tags } from './jest/test-helpers';
 import { generateSecurityPlugin } from './security-plugins';
+import { tags } from './jest/test-helpers';
 
 describe('security-plugins', () => {
   describe('generateSecurityPlugin()', () => {

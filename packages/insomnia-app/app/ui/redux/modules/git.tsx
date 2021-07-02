@@ -1,22 +1,22 @@
-import path from 'path';
-import * as git from 'isomorphic-git';
 import React, { ReactNode } from 'react';
-import YAML from 'yaml';
-import { trackEvent } from '../../../common/analytics';
-import { database as db } from '../../../common/database';
-import { strings } from '../../../common/strings';
-import * as models from '../../../models';
 import type { GitRepository } from '../../../models/git-repository';
-import { createGitRepository } from '../../../models/helpers/git-repository-operations';
+import { showAlert, showError, showModal } from '../../components/modals';
+import GitRepositorySettingsModal from '../../components/modals/git-repository-settings-modal';
+import * as models from '../../../models';
 import type { Workspace } from '../../../models/workspace';
 import { WorkspaceScopeKeys } from '../../../models/workspace';
 import { GIT_CLONE_DIR, GIT_INSOMNIA_DIR, GIT_INSOMNIA_DIR_NAME } from '../../../sync/git/git-vcs';
-import { shallowClone } from '../../../sync/git/shallow-clone';
-import { addDotGit, translateSSHtoHTTP } from '../../../sync/git/utils';
-import { showAlert, showError, showModal } from '../../components/modals';
-import GitRepositorySettingsModal from '../../components/modals/git-repository-settings-modal';
+import path from 'path';
 import { loadStart, loadStop, setActiveWorkspace } from './global';
+import { shallowClone } from '../../../sync/git/shallow-clone';
+import { createGitRepository } from '../../../models/helpers/git-repository-operations';
+import { strings } from '../../../common/strings';
+import { trackEvent } from '../../../common/analytics';
+import YAML from 'yaml';
+import { database as db } from '../../../common/database';
 import { createWorkspace } from './workspace';
+import { addDotGit, translateSSHtoHTTP } from '../../../sync/git/utils';
+import * as git from 'isomorphic-git';
 
 export type UpdateGitRepositoryCallback = (arg0: { gitRepository: GitRepository }) => void;
 

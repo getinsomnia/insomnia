@@ -1,6 +1,6 @@
 import React, { PureComponent, ReactNode } from 'react';
-import Mailto from './base/mailto';
 import { showError } from './modals/index';
+import Mailto from './base/mailto';
 
 interface Props {
   children: ReactNode;

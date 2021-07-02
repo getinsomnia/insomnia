@@ -1,7 +1,7 @@
-import { autoBindMethodsForReact } from 'class-autobind-decorator';
-import classnames from 'classnames';
 import React, { PureComponent, ReactNode } from 'react';
+import { autoBindMethodsForReact } from 'class-autobind-decorator';
 import { AUTOBIND_CFG } from '../../../common/constants';
+import classnames from 'classnames';
 import type { RequestGroup } from '../../../models/request-group';
 
 interface Props {

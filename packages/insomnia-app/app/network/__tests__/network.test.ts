@@ -1,6 +1,8 @@
+import * as networkUtils from '../network';
 import fs from 'fs';
 import { join as pathJoin, resolve as pathResolve } from 'path';
-import { globalBeforeEach } from '../../__jest__/before-each';
+import { getRenderedRequestAndContext } from '../../common/render';
+import * as models from '../../models';
 import {
   AUTH_AWS_IAM,
   AUTH_BASIC,
@@ -12,10 +14,8 @@ import {
   HttpVersions,
 } from '../../common/constants';
 import { filterHeaders } from '../../common/misc';
-import { getRenderedRequestAndContext } from '../../common/render';
-import * as models from '../../models';
+import { globalBeforeEach } from '../../__jest__/before-each';
 import { DEFAULT_BOUNDARY } from '../multipart';
-import * as networkUtils from '../network';
 const CONTEXT = {};
 
 const getRenderedRequest = async (...args) => (await getRenderedRequestAndContext(...args)).request;

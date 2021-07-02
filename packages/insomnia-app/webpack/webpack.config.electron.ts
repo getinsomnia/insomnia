@@ -1,7 +1,7 @@
-import path from 'path';
 import { Configuration, DefinePlugin } from 'webpack';
-import packageJSON from '../package.json';
+import path from 'path';
 import productionConfig from './webpack.config.production';
+import packageJSON from '../package.json';
 
 const PORT = packageJSON.dev['dev-server-port'];
 

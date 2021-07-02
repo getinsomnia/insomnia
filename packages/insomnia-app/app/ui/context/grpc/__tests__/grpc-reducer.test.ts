@@ -1,7 +1,6 @@
+import { findGrpcRequestState, grpcReducer } from '../grpc-reducer';
+import type { GrpcRequestState, GrpcState } from '../grpc-reducer';
 import { createBuilder } from '@develohpanda/fluent-builder';
-import { globalBeforeEach } from '../../../../__jest__/before-each';
-import * as models from '../../../../models';
-import * as protoLoader from '../../../../network/grpc/proto-loader';
 import {
   grpcMessageSchema,
   grpcMethodDefinitionSchema,
@@ -9,8 +8,9 @@ import {
   requestStateSchema,
 } from '../__schemas__';
 import { grpcActions } from '../grpc-actions';
-import type { GrpcRequestState, GrpcState } from '../grpc-reducer';
-import { findGrpcRequestState, grpcReducer } from '../grpc-reducer';
+import { globalBeforeEach } from '../../../../__jest__/before-each';
+import * as protoLoader from '../../../../network/grpc/proto-loader';
+import * as models from '../../../../models';
 
 jest.mock('../../../../network/grpc/proto-loader');
 

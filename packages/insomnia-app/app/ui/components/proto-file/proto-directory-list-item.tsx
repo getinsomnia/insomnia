@@ -1,8 +1,8 @@
-import { Button } from 'insomnia-components';
 import React, { FunctionComponent, useCallback } from 'react';
+import { Button } from 'insomnia-components';
+import ProtoListItem from './proto-list-item';
 import type { ProtoDirectory } from '../../../models/proto-directory';
 import type { DeleteProtoDirectoryHandler } from './proto-file-list';
-import ProtoListItem from './proto-list-item';
 
 interface Props {
   dir: ProtoDirectory;

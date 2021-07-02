@@ -1,14 +1,14 @@
-import { autoBindMethodsForReact } from 'class-autobind-decorator';
 import React, { PureComponent } from 'react';
+import { autoBindMethodsForReact } from 'class-autobind-decorator';
 import { AUTOBIND_CFG } from '../../../common/constants';
-import { HandleGetRenderContext, HandleRender } from '../../../common/render';
-import { Workspace } from '../../../models/workspace';
+import VariableEditor from '../templating/variable-editor';
+import TagEditor from '../templating/tag-editor';
 import Modal from '../base/modal';
 import ModalBody from '../base/modal-body';
-import ModalFooter from '../base/modal-footer';
 import ModalHeader from '../base/modal-header';
-import TagEditor from '../templating/tag-editor';
-import VariableEditor from '../templating/variable-editor';
+import ModalFooter from '../base/modal-footer';
+import { HandleGetRenderContext, HandleRender } from '../../../common/render';
+import { Workspace } from '../../../models/workspace';
 
 interface Props {
   uniqueKey: string;

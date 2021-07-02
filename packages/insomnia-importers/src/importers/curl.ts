@@ -1,5 +1,5 @@
-import { URL } from 'url';
 import { ControlOperator, parse, ParseEntry } from 'shell-quote';
+import { URL } from 'url';
 import { Converter, ImportRequest, Parameter, PostData } from '../entities';
 
 export const id = 'curl';

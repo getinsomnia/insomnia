@@ -1,22 +1,22 @@
-import { autoBindMethodsForReact } from 'class-autobind-decorator';
-import { AsyncButton } from 'insomnia-components';
 import React, { PureComponent } from 'react';
-import { connect } from 'react-redux';
-import { AUTOBIND_CFG } from '../../../common/constants';
-import { GrpcRequestEventEnum } from '../../../common/grpc-events';
-import type { ProtoDirectory } from '../../../models/proto-directory';
 import type { ProtoFile } from '../../../models/proto-file';
-import type { Workspace } from '../../../models/workspace';
-import * as protoManager from '../../../network/grpc/proto-manager';
-import type { GrpcDispatch } from '../../context/grpc';
-import { grpcActions, sendGrpcIpcMultiple } from '../../context/grpc';
-import type { ExpandedProtoDirectory } from '../../redux/proto-selectors';
-import { selectExpandedActiveProtoDirectories } from '../../redux/proto-selectors';
-import Modal from '../base/modal';
+import ModalHeader from '../base/modal-header';
 import ModalBody from '../base/modal-body';
 import ModalFooter from '../base/modal-footer';
-import ModalHeader from '../base/modal-header';
+import { autoBindMethodsForReact } from 'class-autobind-decorator';
+import { AUTOBIND_CFG } from '../../../common/constants';
+import type { Workspace } from '../../../models/workspace';
+import Modal from '../base/modal';
 import ProtoFileList from '../proto-file/proto-file-list';
+import { AsyncButton } from 'insomnia-components';
+import type { GrpcDispatch } from '../../context/grpc';
+import { grpcActions, sendGrpcIpcMultiple } from '../../context/grpc';
+import { GrpcRequestEventEnum } from '../../../common/grpc-events';
+import { connect } from 'react-redux';
+import type { ExpandedProtoDirectory } from '../../redux/proto-selectors';
+import { selectExpandedActiveProtoDirectories } from '../../redux/proto-selectors';
+import type { ProtoDirectory } from '../../../models/proto-directory';
+import * as protoManager from '../../../network/grpc/proto-manager';
 
 interface Props {
   grpcDispatch: GrpcDispatch;

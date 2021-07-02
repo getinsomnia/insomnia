@@ -1,7 +1,7 @@
-import { autoBindMethodsForReact } from 'class-autobind-decorator';
-import fuzzySort from 'fuzzysort';
 import React, { PureComponent } from 'react';
+import { autoBindMethodsForReact } from 'class-autobind-decorator';
 import { AUTOBIND_CFG } from '../../../common/constants';
+import fuzzySort from 'fuzzysort';
 import { fuzzyMatch } from '../../../common/misc';
 
 interface Props {

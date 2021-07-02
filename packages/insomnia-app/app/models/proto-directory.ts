@@ -1,6 +1,6 @@
 import { database as db } from '../common/database';
-import { generateId } from '../common/misc';
 import type { BaseModel } from './index';
+import { generateId } from '../common/misc';
 
 export const name = 'Proto Directory';
 

@@ -1,11 +1,11 @@
-import fs from 'fs';
-import { autoBindMethodsForReact } from 'class-autobind-decorator';
-import electron from 'electron';
 import React, { PureComponent } from 'react';
+import { autoBindMethodsForReact } from 'class-autobind-decorator';
 import { AUTOBIND_CFG } from '../../../../common/constants';
-import * as misc from '../../../../common/misc';
+import fs from 'fs';
+import electron from 'electron';
 import FileInputButton from '../../base/file-input-button';
 import PromptButton from '../../base/prompt-button';
+import * as misc from '../../../../common/misc';
 
 interface Props {
   onChange: (path: string) => void;

@@ -1,10 +1,10 @@
 import CodeMirror, { Token } from 'codemirror';
 import * as misc from '../../../../common/misc';
-import { HandleGetRenderContext, HandleRender } from '../../../../common/render';
-import { getTagDefinitions } from '../../../../templating/index';
-import { tokenizeTag } from '../../../../templating/utils';
-import { showModal } from '../../modals/index';
 import NunjucksVariableModal from '../../modals/nunjucks-modal';
+import { showModal } from '../../modals/index';
+import { tokenizeTag } from '../../../../templating/utils';
+import { getTagDefinitions } from '../../../../templating/index';
+import { HandleGetRenderContext, HandleRender } from '../../../../common/render';
 
 CodeMirror.defineExtension('enableNunjucksTags', function(
   handleRender: HandleRender,

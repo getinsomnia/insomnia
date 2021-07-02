@@ -1,8 +1,8 @@
 import { ipcRenderer } from 'electron';
 import { GrpcResponseEventEnum } from '../../../common/grpc-events';
-import type { GrpcRequestEvent } from '../../../common/grpc-events';
 import { grpcActions } from './grpc-actions';
 import type { GrpcDispatch } from './grpc-actions';
+import type { GrpcRequestEvent } from '../../../common/grpc-events';
 
 const listenForStart = (dispatch: GrpcDispatch) => {
   ipcRenderer.on(GrpcResponseEventEnum.start, (_, requestId) => {

@@ -1,5 +1,3 @@
-import { dummyName, dummyPluginDoc, getSpec, pluginDummy } from '../declarative-config/jest/test-helpers';
-import { xKongName } from '../types/kong';
 import { K8sAnnotations, K8sIngressRule, K8sIngressTLS, K8sManifest } from '../types/kubernetes-config';
 import { OA3Server } from '../types/openapi3';
 import {
@@ -20,6 +18,8 @@ import {
   methodDoc,
   pluginKeyAuth,
 } from './plugin-helpers';
+import { xKongName } from '../types/kong';
+import { dummyName, dummyPluginDoc, getSpec, pluginDummy } from '../declarative-config/jest/test-helpers';
 
 describe('index', () => {
   describe('getSpecName()', () => {

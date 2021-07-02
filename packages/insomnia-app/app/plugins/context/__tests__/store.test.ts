@@ -1,5 +1,5 @@
-import { globalBeforeEach } from '../../../__jest__/before-each';
 import * as plugin from '../store';
+import { globalBeforeEach } from '../../../__jest__/before-each';
 const PLUGIN = {
   name: 'my-plugin',
   version: '1.0.0',

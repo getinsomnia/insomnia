@@ -1,9 +1,9 @@
 import React, { Component, Fragment, ReactNode } from 'react';
-import { SvgIcon, IconEnum } from '../svg-icon';
 import { Tooltip } from '../tooltip';
-import { SidebarInvalidSection } from './sidebar-invalid-section';
+import { SvgIcon, IconEnum } from '../svg-icon';
 import { SidebarItem } from './sidebar-item';
 import { SidebarSection } from './sidebar-section';
+import { SidebarInvalidSection } from './sidebar-invalid-section';
 
 export interface SidebarParametersProps {
   parameters: Record<string, any>;

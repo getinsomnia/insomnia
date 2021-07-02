@@ -1,5 +1,5 @@
-import path from 'path';
 import { Configuration, DefinePlugin, optimize } from 'webpack';
+import path from 'path';
 import pkg from '../package.json';
 
 // recommended by the docs: https://webpack.js.org/configuration/configuration-languages/

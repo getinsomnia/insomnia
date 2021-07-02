@@ -1,12 +1,12 @@
-import { autoBindMethodsForReact } from 'class-autobind-decorator';
 import React, { PureComponent } from 'react';
-import * as session from '../../../account/session';
+import { autoBindMethodsForReact } from 'class-autobind-decorator';
 import { AUTOBIND_CFG } from '../../../common/constants';
 import Link from '../base/link';
 import Modal from '../base/modal';
 import ModalBody from '../base/modal-body';
-import ModalFooter from '../base/modal-footer';
 import ModalHeader from '../base/modal-header';
+import ModalFooter from '../base/modal-footer';
+import * as session from '../../../account/session';
 import { showModal } from './index';
 
 interface State {

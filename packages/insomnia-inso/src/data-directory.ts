@@ -1,5 +1,5 @@
-import { homedir } from 'os';
 import path from 'path';
+import { homedir } from 'os';
 
 /**
  * getAppDataDir returns the data directory for an Electron app,

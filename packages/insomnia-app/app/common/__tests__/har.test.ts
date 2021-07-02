@@ -1,9 +1,9 @@
 import path from 'path';
-import { globalBeforeEach } from '../../__jest__/before-each';
-import * as models from '../../models';
-import { AUTH_BASIC } from '../constants';
 import * as harUtils from '../har';
 import * as render from '../render';
+import * as models from '../../models';
+import { AUTH_BASIC } from '../constants';
+import { globalBeforeEach } from '../../__jest__/before-each';
 
 describe('exportHar()', () => {
   beforeEach(globalBeforeEach);

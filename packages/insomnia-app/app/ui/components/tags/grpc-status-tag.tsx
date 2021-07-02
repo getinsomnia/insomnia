@@ -1,7 +1,7 @@
-import { status } from '@grpc/grpc-js';
-import classnames from 'classnames';
 import React, { PureComponent } from 'react';
+import classnames from 'classnames';
 import Tooltip from '../tooltip';
+import { status } from '@grpc/grpc-js';
 
 interface Props {
   statusCode?: number;

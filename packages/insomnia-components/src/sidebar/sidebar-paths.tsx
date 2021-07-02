@@ -1,9 +1,9 @@
 import React, { Component, Fragment, ReactNode } from 'react';
 import { SvgIcon, IconEnum } from '../svg-icon';
 import { SidebarBadge } from './sidebar-badge';
-import { SidebarInvalidSection } from './sidebar-invalid-section';
 import { SidebarItem } from './sidebar-item';
 import { SidebarSection } from './sidebar-section';
+import { SidebarInvalidSection } from './sidebar-invalid-section';
 
 export type SidebarPathsType = Record<string, any> | string;
 

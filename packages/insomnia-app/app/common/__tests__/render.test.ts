@@ -1,6 +1,6 @@
-import { globalBeforeEach } from '../../__jest__/before-each';
-import * as models from '../../models';
 import * as renderUtils from '../render';
+import * as models from '../../models';
+import { globalBeforeEach } from '../../__jest__/before-each';
 
 jest.mock('electron');
 

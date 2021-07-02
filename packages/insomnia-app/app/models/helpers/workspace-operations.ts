@@ -1,7 +1,7 @@
-import { database as db } from '../../common/database';
-import type { ApiSpec } from '../api-spec';
 import * as models from '../index';
+import { database as db } from '../../common/database';
 import { isDesign, Workspace } from '../workspace';
+import type { ApiSpec } from '../api-spec';
 
 export async function rename(w: Workspace, s: ApiSpec, name: string) {
   if (isDesign(w)) {

@@ -1,5 +1,5 @@
-import EventEmitter from 'events';
 import electron from 'electron';
+import EventEmitter from 'events';
 
 export function createBWRedirectMock(redirectTo) {
   electron.remote.BrowserWindow = jest.fn(function() {

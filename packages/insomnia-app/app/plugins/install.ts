@@ -1,10 +1,10 @@
-import childProcess from 'child_process';
-import fs from 'fs';
-import path from 'path';
 import * as electron from 'electron';
+import fs from 'fs';
 import fsx from 'fs-extra';
-import mkdirp from 'mkdirp';
+import childProcess from 'child_process';
 import { isDevelopment, isWindows, PLUGIN_PATH } from '../common/constants';
+import mkdirp from 'mkdirp';
+import path from 'path';
 import { getTempDir } from '../common/electron-helpers';
 
 const YARN_DEPRECATED_WARN = /(?<keyword>warning)(?<dependencies>[^>:].+[>:])(?<issue>.+)/;

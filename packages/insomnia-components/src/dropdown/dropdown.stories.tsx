@@ -1,10 +1,10 @@
-import { number, withKnobs } from '@storybook/addon-knobs';
 import React from 'react';
-import { Button } from '../button';
-import { SvgIcon } from '../svg-icon';
+import { number, withKnobs } from '@storybook/addon-knobs';
 import { Dropdown } from './dropdown';
-import { DropdownDivider } from './dropdown-divider';
 import { DropdownItem } from './dropdown-item';
+import { DropdownDivider } from './dropdown-divider';
+import { SvgIcon } from '../svg-icon';
+import { Button } from '../button';
 
 export default {
   title: 'Navigation | Dropdown',

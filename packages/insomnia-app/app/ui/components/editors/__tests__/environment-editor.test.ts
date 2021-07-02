@@ -1,5 +1,5 @@
-import { NUNJUCKS_TEMPLATE_GLOBAL_PROPERTY_NAME } from '../../../../templating';
 import { ensureKeyIsValid } from '../environment-editor';
+import { NUNJUCKS_TEMPLATE_GLOBAL_PROPERTY_NAME } from '../../../../templating';
 
 describe('ensureKeyIsValid', () => {
   it.each(['$', '$a', '$ab'])('%s should be invalid when as key begins with $', key => {

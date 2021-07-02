@@ -1,7 +1,7 @@
-import { globalBeforeEach } from '../../__jest__/before-each';
 import * as models from '../../models';
-import { data as fixtures } from '../__fixtures__/nestedfolders';
 import { database as db, _repairDatabase } from '../database';
+import { globalBeforeEach } from '../../__jest__/before-each';
+import { data as fixtures } from '../__fixtures__/nestedfolders';
 
 function loadFixture() {
   const promises: Promise<models.BaseModel>[] = [];

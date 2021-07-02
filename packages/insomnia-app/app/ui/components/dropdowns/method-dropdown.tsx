@@ -1,10 +1,10 @@
-import { autoBindMethodsForReact } from 'class-autobind-decorator';
 import React, { PureComponent } from 'react';
-import * as constants from '../../../common/constants';
-import { METHOD_GRPC, AUTOBIND_CFG } from '../../../common/constants';
+import { autoBindMethodsForReact } from 'class-autobind-decorator';
 import { DropdownButton, DropdownDivider, DropdownItem } from '../base/dropdown';
 import Dropdown from '../base/dropdown/dropdown';
+import * as constants from '../../../common/constants';
 import { showPrompt } from '../modals/index';
+import { METHOD_GRPC, AUTOBIND_CFG } from '../../../common/constants';
 const LOCALSTORAGE_KEY = 'insomnia.httpMethods';
 const GRPC_LABEL = 'gRPC';
 

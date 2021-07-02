@@ -1,11 +1,11 @@
-import { writeFileSync, unlink } from 'fs';
-import { tmpdir } from 'os';
-import { join } from 'path';
-import chai from 'chai';
-import { sync } from 'mkdirp';
 import Mocha, { Reporter, ReporterConstructor } from 'mocha';
-import Insomnia, { InsomniaOptions } from './insomnia';
+import chai from 'chai';
+import { tmpdir } from 'os';
+import { writeFileSync, unlink } from 'fs';
+import { sync } from 'mkdirp';
+import { join } from 'path';
 import { JavaScriptReporter } from './javascript-reporter';
+import Insomnia, { InsomniaOptions } from './insomnia';
 
 declare global {
   namespace NodeJS {

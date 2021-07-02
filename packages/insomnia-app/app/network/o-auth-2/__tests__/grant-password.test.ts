@@ -1,9 +1,9 @@
-import fs from 'fs';
-import path from 'path';
-import { globalBeforeEach } from '../../../__jest__/before-each';
-import { getTempDir } from '../../../common/electron-helpers';
-import * as network from '../../network';
 import getToken from '../grant-password';
+import { globalBeforeEach } from '../../../__jest__/before-each';
+import * as network from '../../network';
+import { getTempDir } from '../../../common/electron-helpers';
+import path from 'path';
+import fs from 'fs';
 
 // Mock some test things
 const ACCESS_TOKEN_URL = 'https://foo.com/access_token';

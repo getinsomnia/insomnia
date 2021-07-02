@@ -1,8 +1,8 @@
-import { autoBindMethodsForReact } from 'class-autobind-decorator';
-import classnames from 'classnames';
 import React, { PureComponent, ReactNode } from 'react';
-import ReactDOM from 'react-dom';
+import { autoBindMethodsForReact } from 'class-autobind-decorator';
 import { AUTOBIND_CFG } from '../../common/constants';
+import classnames from 'classnames';
+import ReactDOM from 'react-dom';
 
 interface Props {
   children: ReactNode;

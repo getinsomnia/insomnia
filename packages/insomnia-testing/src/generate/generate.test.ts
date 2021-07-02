@@ -1,6 +1,6 @@
+import { generate } from './generate';
 import { readdirSync, readFileSync } from 'fs';
 import { join } from 'path';
-import { generate } from './generate';
 
 const fixturesPath = join(__dirname, 'fixtures');
 const fixtures = readdirSync(fixturesPath);

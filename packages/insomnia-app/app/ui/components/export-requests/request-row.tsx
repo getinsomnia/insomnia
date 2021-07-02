@@ -1,10 +1,10 @@
-import { autoBindMethodsForReact } from 'class-autobind-decorator';
 import React, { PureComponent } from 'react';
+import { autoBindMethodsForReact } from 'class-autobind-decorator';
 import { AUTOBIND_CFG } from '../../../common/constants';
-import { GrpcRequest, isGrpcRequest } from '../../../models/grpc-request';
-import type { Request } from '../../../models/request';
-import GrpcTag from '../tags/grpc-tag';
 import MethodTag from '../tags/method-tag';
+import type { Request } from '../../../models/request';
+import { GrpcRequest, isGrpcRequest } from '../../../models/grpc-request';
+import GrpcTag from '../tags/grpc-tag';
 
 interface Props {
   handleSetItemSelected: (...args: any[]) => any;

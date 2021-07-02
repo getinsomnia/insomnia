@@ -1,9 +1,9 @@
-import { motion } from 'framer-motion';
 import React, { FunctionComponent, ReactNode } from 'react';
-import { useToggle } from 'react-use';
 import styled from 'styled-components';
-import { Button } from '../button';
+import { useToggle } from 'react-use';
+import { motion } from 'framer-motion';
 import { SvgIcon } from '../svg-icon';
+import { Button } from '../button';
 import { ListGroupItem } from './list-group-item';
 import { UnitTestRequestSelector } from './unit-test-request-selector';
 

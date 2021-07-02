@@ -1,5 +1,5 @@
-import { autoBindMethodsForReact } from 'class-autobind-decorator';
 import React, { PureComponent, ReactNode } from 'react';
+import { autoBindMethodsForReact } from 'class-autobind-decorator';
 import {
   AUTOBIND_CFG,
   AUTH_BASIC,
@@ -15,11 +15,11 @@ import {
   AUTH_ASAP,
   getAuthTypeName,
 } from '../../../common/constants';
-import * as models from '../../../models';
-import type { Request, RequestAuthentication } from '../../../models/request';
 import { Dropdown, DropdownButton, DropdownDivider, DropdownItem } from '../base/dropdown';
 import { showModal } from '../modals';
 import AlertModal from '../modals/alert-modal';
+import * as models from '../../../models';
+import type { Request, RequestAuthentication } from '../../../models/request';
 
 interface Props {
   onChange: (r: Request, arg1: RequestAuthentication) => Promise<Request>;

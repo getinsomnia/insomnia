@@ -1,12 +1,12 @@
 import path from 'path';
-import YAML from 'yaml';
 import { database as db } from '../../common/database';
 import * as models from '../../models';
+import YAML from 'yaml';
+import Stat from './stat';
 import { GIT_INSOMNIA_DIR_NAME } from './git-vcs';
 import parseGitPath from './parse-git-path';
-import Stat from './stat';
-import { SystemError } from './system-error';
 import { BufferEncoding } from './utils';
+import { SystemError } from './system-error';
 
 export class NeDBClient {
   _workspaceId: string;

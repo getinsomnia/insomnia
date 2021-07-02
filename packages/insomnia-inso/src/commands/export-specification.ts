@@ -1,8 +1,8 @@
+import type { GlobalOptions } from '../get-options';
 import { loadDb } from '../db';
 import { loadApiSpec, promptApiSpec } from '../db/models/api-spec';
-import type { GlobalOptions } from '../get-options';
-import { logger } from '../logger';
 import { writeFileWithCliOptions } from '../write-file';
+import { logger } from '../logger';
 
 export type ExportSpecificationOptions = GlobalOptions & {
   output?: string;

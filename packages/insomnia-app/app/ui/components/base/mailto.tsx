@@ -1,7 +1,7 @@
-import { autoBindMethodsForReact } from 'class-autobind-decorator';
-import { buildQueryStringFromParams, joinUrlAndQueryString } from 'insomnia-url';
 import React, { PureComponent, ReactNode } from 'react';
+import { autoBindMethodsForReact } from 'class-autobind-decorator';
 import { AUTOBIND_CFG } from '../../../common/constants';
+import { buildQueryStringFromParams, joinUrlAndQueryString } from 'insomnia-url';
 import Link from './link';
 
 interface Props {

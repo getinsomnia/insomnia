@@ -1,11 +1,11 @@
-import os from 'os';
-import path from 'path';
+import { conversionTypeMap, generateConfig, GenerateConfigOptions } from './generate-config';
 import { generate as _generate, generateFromString as _generateFromString, KongForKubernetesResult } from 'openapi-2-kong';
-import { InsoError } from '../errors';
+import path from 'path';
+import { writeFileWithCliOptions as _writeFileWithCliOptions } from '../write-file';
 import { globalBeforeAll, globalBeforeEach } from '../jest/before';
 import { logger } from '../logger';
-import { writeFileWithCliOptions as _writeFileWithCliOptions } from '../write-file';
-import { conversionTypeMap, generateConfig, GenerateConfigOptions } from './generate-config';
+import { InsoError } from '../errors';
+import os from 'os';
 
 jest.mock('openapi-2-kong');
 jest.mock('../write-file');

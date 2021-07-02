@@ -1,20 +1,20 @@
-import { autoBindMethodsForReact } from 'class-autobind-decorator';
-import classnames from 'classnames';
 import React, { PureComponent } from 'react';
-import { DragSource, DropTarget } from 'react-dnd';
-import ReactDOM from 'react-dom';
+import { autoBindMethodsForReact } from 'class-autobind-decorator';
 import { AUTOBIND_CFG } from '../../../common/constants';
-import { HotKeyRegistry } from '../../../common/hotkeys';
-import * as misc from '../../../common/misc';
-import { HandleRender } from '../../../common/render';
-import { Environment } from '../../../models/environment';
-import { RequestGroup } from '../../../models/request-group';
-import { Workspace } from '../../../models/workspace';
+import ReactDOM from 'react-dom';
+import { DragSource, DropTarget } from 'react-dnd';
+import classnames from 'classnames';
 import Highlight from '../base/highlight';
 import RequestGroupActionsDropdown from '../dropdowns/request-group-actions-dropdown';
+import SidebarRequestRow from './sidebar-request-row';
+import * as misc from '../../../common/misc';
 import { showModal } from '../modals';
 import RequestGroupSettingsModal from '../modals/request-group-settings-modal';
-import SidebarRequestRow from './sidebar-request-row';
+import { RequestGroup } from '../../../models/request-group';
+import { Workspace } from '../../../models/workspace';
+import { Environment } from '../../../models/environment';
+import { HotKeyRegistry } from '../../../common/hotkeys';
+import { HandleRender } from '../../../common/render';
 
 interface Props {
   handleSetRequestGroupCollapsed: Function;

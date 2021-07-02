@@ -1,5 +1,5 @@
-import classnames from 'classnames';
 import React, { HTMLAttributes, PureComponent, ReactNode } from 'react';
+import classnames from 'classnames';
 
 interface Props extends HTMLAttributes<HTMLDivElement> {
   noScroll?: boolean;

@@ -1,5 +1,5 @@
-import classnames from 'classnames';
 import React, { FunctionComponent } from 'react';
+import classnames from 'classnames';
 import { useGrpcRequestState } from '../context/grpc';
 
 interface Props {

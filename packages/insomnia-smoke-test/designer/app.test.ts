@@ -1,11 +1,11 @@
-import { Application } from 'spectron';
-import { isPackage, launchApp, stop } from '../modules/application';
 import * as client from '../modules/client';
-import * as dropdown from '../modules/dropdown';
 import * as home from '../modules/home';
-import * as modal from '../modules/modal';
 import * as settings from '../modules/settings';
+import * as modal from '../modules/modal';
+import * as dropdown from '../modules/dropdown';
 
+import { isPackage, launchApp, stop } from '../modules/application';
+import { Application } from 'spectron';
 
 const itIf = condition => (condition ? it : it.skip);
 // @ts-expect-error TSCONVERSION

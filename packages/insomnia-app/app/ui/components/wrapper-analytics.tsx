@@ -1,10 +1,10 @@
 import React, { FunctionComponent, useCallback } from 'react';
-import { useDispatch } from 'react-redux';
-import { getAppLongName, getAppSynopsis, ACTIVITY_HOME } from '../../common/constants';
-import { setActiveActivity } from '../redux/modules/global';
-import Analytics from './analytics';
-import OnboardingContainer from './onboarding-container';
 import type { WrapperProps } from './wrapper';
+import OnboardingContainer from './onboarding-container';
+import Analytics from './analytics';
+import { useDispatch } from 'react-redux';
+import { setActiveActivity } from '../redux/modules/global';
+import { getAppLongName, getAppSynopsis, ACTIVITY_HOME } from '../../common/constants';
 
 interface Props {
   wrapperProps: WrapperProps;

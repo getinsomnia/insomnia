@@ -1,5 +1,5 @@
-import { spawn } from 'child_process';
 import path from 'path';
+import { spawn } from 'child_process';
 import { app } from 'electron';
 
 function run(args, done) {

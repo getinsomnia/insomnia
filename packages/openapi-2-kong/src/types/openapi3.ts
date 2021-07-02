@@ -1,4 +1,6 @@
 import { HttpMethodType } from '../common';
+import { K8sIngressTLS } from './kubernetes-config';
+import { Taggable } from './outputs';
 import {
   XKongName,
   XKongPluginKeyAuth,
@@ -8,8 +10,6 @@ import {
   XKongServiceDefaults,
   XKongUpstreamDefaults,
 } from './kong';
-import { K8sIngressTLS } from './kubernetes-config';
-import { Taggable } from './outputs';
 
 export interface StripPath {
   // eslint-disable-next-line camelcase -- this is defined by a spec that is out of our control

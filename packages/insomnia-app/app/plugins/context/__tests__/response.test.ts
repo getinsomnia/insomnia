@@ -1,9 +1,9 @@
-import fs from 'fs';
-import path from 'path';
+import * as plugin from '../response';
 import { globalBeforeEach } from '../../../__jest__/before-each';
 import { getTempDir } from '../../../common/electron-helpers';
+import fs from 'fs';
+import path from 'path';
 import * as models from '../../../models/index';
-import * as plugin from '../response';
 
 describe('init()', () => {
   beforeEach(globalBeforeEach);

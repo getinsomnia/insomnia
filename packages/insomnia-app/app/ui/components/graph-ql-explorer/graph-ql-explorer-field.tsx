@@ -1,8 +1,8 @@
-import type { GraphQLField, GraphQLType } from 'graphql';
 import React, { Fragment, PureComponent } from 'react';
+import type { GraphQLField, GraphQLType } from 'graphql';
+import GraphQLExplorerTypeLink from './graph-ql-explorer-type-link';
 import MarkdownPreview from '../markdown-preview';
 import GraphQLDefaultValue from './graph-ql-default-value';
-import GraphQLExplorerTypeLink from './graph-ql-explorer-type-link';
 
 interface Props {
   onNavigateType: (type: GraphQLType) => void;

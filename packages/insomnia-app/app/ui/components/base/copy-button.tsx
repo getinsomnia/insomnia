@@ -1,8 +1,8 @@
-import { autoBindMethodsForReact } from 'class-autobind-decorator';
-import { clipboard } from 'electron';
-import { Button, ButtonProps } from 'insomnia-components';
 import React, { PureComponent, ReactNode } from 'react';
+import { clipboard } from 'electron';
+import { autoBindMethodsForReact } from 'class-autobind-decorator';
 import { AUTOBIND_CFG } from '../../../common/constants';
+import { Button, ButtonProps } from 'insomnia-components';
 
 interface Props extends ButtonProps {
   content: string | Function,

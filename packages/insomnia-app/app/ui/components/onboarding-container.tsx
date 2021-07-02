@@ -1,7 +1,7 @@
 import React, { FunctionComponent } from 'react';
-import coreLogo from '../images/insomnia-core-logo.png';
-import PageLayout from './page-layout';
 import type { WrapperProps } from './wrapper';
+import PageLayout from './page-layout';
+import coreLogo from '../images/insomnia-core-logo.png';
 
 interface Props {
   wrapperProps: WrapperProps;

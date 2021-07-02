@@ -1,5 +1,5 @@
-import { InsoError } from '../../errors';
 import type { BaseModel } from './types';
+import { InsoError } from '../../errors';
 
 export const matchIdIsh = ({ _id }: BaseModel, identifier: string) =>
   _id.startsWith(identifier);

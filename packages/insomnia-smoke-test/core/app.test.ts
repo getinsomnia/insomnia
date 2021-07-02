@@ -1,14 +1,14 @@
-import fs from 'fs';
-import { Application } from 'spectron';
-import { basicAuthCreds } from '../fixtures/constants';
-import { launchApp, stop } from '../modules/application';
-import * as client from '../modules/client';
 import * as debug from '../modules/debug';
+import * as client from '../modules/client';
+import { launchApp, stop } from '../modules/application';
 import * as dropdown from '../modules/dropdown';
+import * as settings from '../modules/settings';
+import fs from 'fs';
+import { basicAuthCreds } from '../fixtures/constants';
+import * as onboarding from '../modules/onboarding';
 import * as home from '../modules/home';
 import * as modal from '../modules/modal';
-import * as onboarding from '../modules/onboarding';
-import * as settings from '../modules/settings';
+import { Application } from 'spectron';
 
 describe('Application launch', function() {
   jest.setTimeout(50000);

@@ -1,12 +1,12 @@
-import fs from 'fs';
-import os from 'os';
 import path from 'path';
+import os from 'os';
 import mkdirp from 'mkdirp';
+import fs from 'fs';
+import { isProtoFile, ProtoFile } from '../../../models/proto-file';
+import { isProtoDirectory, ProtoDirectory } from '../../../models/proto-directory';
 import { database as db } from '../../../common/database';
 import * as models from '../../../models';
 import type { BaseModel } from '../../../models';
-import { isProtoDirectory, ProtoDirectory } from '../../../models/proto-directory';
-import { isProtoFile, ProtoFile } from '../../../models/proto-file';
 import { isWorkspace, Workspace } from '../../../models/workspace';
 
 const getProtoTempFileName = ({ _id, modified }: ProtoFile): string => `${_id}.${modified}.proto`;

@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
-import type { KeyBindings } from '../../../../common/hotkeys';
 import Hotkey from '../../hotkey';
+import type { KeyBindings } from '../../../../common/hotkeys';
 
 interface Props {
   keyBindings: KeyBindings;

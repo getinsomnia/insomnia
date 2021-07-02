@@ -1,6 +1,6 @@
-import { autoBindMethodsForReact } from 'class-autobind-decorator';
-import Papa from 'papaparse';
 import React, { PureComponent } from 'react';
+import Papa from 'papaparse';
+import { autoBindMethodsForReact } from 'class-autobind-decorator';
 import { AUTOBIND_CFG } from '../../../common/constants';
 
 interface Props {

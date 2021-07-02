@@ -1,6 +1,6 @@
-import { select, withKnobs } from '@storybook/addon-knobs';
 import React from 'react';
 import { AsyncButton } from './async-button';
+import { select, withKnobs } from '@storybook/addon-knobs';
 import { ButtonSizeEnum, ButtonThemeEnum, ButtonVariantEnum } from './button';
 
 export default {

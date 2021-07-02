@@ -1,15 +1,10 @@
-import { autoBindMethodsForReact } from 'class-autobind-decorator';
-import classnames from 'classnames';
-import React, { PureComponent } from 'react';
-import { AUTOBIND_CFG } from '../../../../common/constants';
-import { convertEpochToMilliseconds } from '../../../../common/misc';
-import { HandleGetRenderContext, HandleRender } from '../../../../common/render';
-import accessTokenUrls from '../../../../datasets/access-token-urls';
-import authorizationUrls from '../../../../datasets/authorization-urls';
-import * as models from '../../../../models';
-import type { OAuth2Token } from '../../../../models/o-auth-2-token';
 import type { Request, RequestAuthentication } from '../../../../models/request';
-import type { Settings } from '../../../../models/settings';
+import type { OAuth2Token } from '../../../../models/o-auth-2-token';
+import React, { PureComponent } from 'react';
+import classnames from 'classnames';
+import { autoBindMethodsForReact } from 'class-autobind-decorator';
+import { AUTOBIND_CFG } from '../../../../common/constants';
+import OneLineEditor from '../../codemirror/one-line-editor';
 import {
   GRANT_TYPE_AUTHORIZATION_CODE,
   GRANT_TYPE_CLIENT_CREDENTIALS,
@@ -19,16 +14,21 @@ import {
   RESPONSE_TYPE_ID_TOKEN_TOKEN,
   RESPONSE_TYPE_TOKEN,
 } from '../../../../network/o-auth-2/constants';
+import authorizationUrls from '../../../../datasets/authorization-urls';
+import accessTokenUrls from '../../../../datasets/access-token-urls';
 import getAccessToken from '../../../../network/o-auth-2/get-token';
-import { initNewOAuthSession } from '../../../../network/o-auth-2/misc';
-import Button from '../../base/button';
+import * as models from '../../../../models';
 import Link from '../../base/link';
-import PromptButton from '../../base/prompt-button';
-import OneLineEditor from '../../codemirror/one-line-editor';
 import HelpTooltip from '../../help-tooltip';
+import PromptButton from '../../base/prompt-button';
+import TimeFromNow from '../../time-from-now';
+import Button from '../../base/button';
 import { showModal } from '../../modals';
 import ResponseDebugModal from '../../modals/response-debug-modal';
-import TimeFromNow from '../../time-from-now';
+import type { Settings } from '../../../../models/settings';
+import { initNewOAuthSession } from '../../../../network/o-auth-2/misc';
+import { convertEpochToMilliseconds } from '../../../../common/misc';
+import { HandleGetRenderContext, HandleRender } from '../../../../common/render';
 
 interface Props {
   handleRender: HandleRender;

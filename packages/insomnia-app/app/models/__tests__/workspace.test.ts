@@ -1,11 +1,11 @@
-import { globalBeforeEach } from '../../__jest__/before-each';
-import { database } from '../../common/database';
-import { ApiSpec } from '../api-spec';
-import { CookieJar } from '../cookie-jar';
-import { Environment } from '../environment';
 import * as models from '../index';
+import { globalBeforeEach } from '../../__jest__/before-each';
 import { WorkspaceScopeKeys } from '../workspace';
+import { database } from '../../common/database';
 import { WorkspaceMeta } from '../workspace-meta';
+import { Environment } from '../environment';
+import { CookieJar } from '../cookie-jar';
+import { ApiSpec } from '../api-spec';
 
 describe('migrate()', () => {
   beforeEach(globalBeforeEach);

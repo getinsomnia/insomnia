@@ -1,10 +1,10 @@
+import appConfig from '../config/config.json';
+import glob from 'fast-glob';
 import { promises } from 'fs';
 import { basename, posix } from 'path';
-import { Octokit } from '@octokit/rest';
-import glob from 'fast-glob';
-import appConfig from '../config/config.json';
-import { start as build } from './build';
 import { start as packageApp } from './package';
+import { start as build } from './build';
+import { Octokit } from '@octokit/rest';
 const { readFile } = promises;
 
 // Configure Octokit

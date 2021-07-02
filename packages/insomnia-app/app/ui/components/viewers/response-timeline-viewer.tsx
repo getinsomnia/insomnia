@@ -1,8 +1,8 @@
 import React, { PureComponent } from 'react';
-import { clickLink } from '../../../common/electron-helpers';
+import CodeEditor from '../codemirror/code-editor';
 import * as models from '../../../models';
 import { Response } from '../../../models/response';
-import CodeEditor from '../codemirror/code-editor';
+import { clickLink } from '../../../common/electron-helpers';
 
 interface Props {
   response: Response,

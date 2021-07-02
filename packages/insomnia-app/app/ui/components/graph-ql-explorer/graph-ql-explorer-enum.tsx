@@ -1,9 +1,9 @@
-import { autoBindMethodsForReact } from 'class-autobind-decorator';
-import type { GraphQLEnumValue } from 'graphql';
-import { GraphQLEnumType } from 'graphql';
 import React, { Fragment, PureComponent } from 'react';
+import { autoBindMethodsForReact } from 'class-autobind-decorator';
 import { AUTOBIND_CFG } from '../../../common/constants';
 import MarkdownPreview from '../markdown-preview';
+import type { GraphQLEnumValue } from 'graphql';
+import { GraphQLEnumType } from 'graphql';
 
 interface Props {
   type: GraphQLEnumType;

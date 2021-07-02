@@ -1,26 +1,26 @@
 import * as path from 'path';
-import { autoBindMethodsForReact } from 'class-autobind-decorator';
-import * as electron from 'electron';
-import { Button, ToggleSwitch } from 'insomnia-components';
+import type { Plugin } from '../../../plugins/index';
+import { getPlugins } from '../../../plugins/index';
 import React, { ChangeEvent, FormEvent, PureComponent } from 'react';
+import { autoBindMethodsForReact } from 'class-autobind-decorator';
 import {
   AUTOBIND_CFG,
   NPM_PACKAGE_BASE,
   PLUGIN_HUB_BASE,
   PLUGIN_PATH,
 } from '../../../common/constants';
-import { docsPlugins } from '../../../common/documentation';
+import * as electron from 'electron';
+import CopyButton from '../base/copy-button';
+import { reload } from '../../../templating/index';
+import installPlugin from '../../../plugins/install';
+import HelpTooltip from '../help-tooltip';
+import Link from '../base/link';
 import { delay } from '../../../common/misc';
 import type { PluginConfig, Settings } from '../../../models/settings';
+import { Button, ToggleSwitch } from 'insomnia-components';
 import { createPlugin } from '../../../plugins/create';
-import type { Plugin } from '../../../plugins/index';
-import { getPlugins } from '../../../plugins/index';
-import installPlugin from '../../../plugins/install';
-import { reload } from '../../../templating/index';
-import CopyButton from '../base/copy-button';
-import Link from '../base/link';
-import HelpTooltip from '../help-tooltip';
 import { showAlert, showPrompt } from '../modals';
+import { docsPlugins } from '../../../common/documentation';
 
 interface Props {
   settings: Settings;

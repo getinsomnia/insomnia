@@ -1,8 +1,8 @@
-import fs from 'fs';
-import * as os from 'os';
-import path from 'path';
 import electron, { BrowserWindow } from 'electron';
+import path from 'path';
 import { Curl } from 'node-libcurl';
+import fs from 'fs';
+import LocalStorage from './local-storage';
 import {
   changelogUrl,
   getAppLongName,
@@ -14,10 +14,10 @@ import {
   isMac,
   MNEMONIC_SYM,
 } from '../common/constants';
-import { docsBase } from '../common/documentation';
 import { clickLink, getDataDirectory, restartApp } from '../common/electron-helpers';
 import * as log from '../common/log';
-import LocalStorage from './local-storage';
+import * as os from 'os';
+import { docsBase } from '../common/documentation';
 
 const { app, Menu, shell, dialog, clipboard } = electron;
 // So we can use native modules in renderer

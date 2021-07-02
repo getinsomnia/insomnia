@@ -1,15 +1,15 @@
-import { autoBindMethodsForReact } from 'class-autobind-decorator';
-import classnames from 'classnames';
 import React, { CSSProperties, Fragment, PureComponent, ReactNode } from 'react';
 import ReactDOM from 'react-dom';
+import { autoBindMethodsForReact } from 'class-autobind-decorator';
 import { AUTOBIND_CFG } from '../../../../common/constants';
-import { hotKeyRefs } from '../../../../common/hotkeys';
-import { executeHotKey } from '../../../../common/hotkeys-listener';
+import classnames from 'classnames';
+import DropdownButton from './dropdown-button';
+import DropdownItem from './dropdown-item';
+import DropdownDivider from './dropdown-divider';
 import { fuzzyMatch } from '../../../../common/misc';
 import KeydownBinder from '../../keydown-binder';
-import DropdownButton from './dropdown-button';
-import DropdownDivider from './dropdown-divider';
-import DropdownItem from './dropdown-item';
+import { executeHotKey } from '../../../../common/hotkeys-listener';
+import { hotKeyRefs } from '../../../../common/hotkeys';
 const dropdownsContainer = document.querySelector('#dropdowns-container');
 
 export interface DropdownProps {

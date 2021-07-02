@@ -1,8 +1,8 @@
 import CodeMirror from 'codemirror';
 import 'codemirror/addon/mode/overlay';
-import { escapeHTML, escapeRegex } from '../../../../common/misc';
 import * as models from '../../../../models';
 import { getDefaultFill } from '../../../../templating/utils';
+import { escapeHTML, escapeRegex } from '../../../../common/misc';
 
 const NAME_MATCH_FLEXIBLE = /[\w.\][\-/]+$/;
 const NAME_MATCH = /[\w.\][]+$/;

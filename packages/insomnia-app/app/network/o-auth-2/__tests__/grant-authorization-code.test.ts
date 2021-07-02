@@ -1,10 +1,10 @@
-import fs from 'fs';
-import path from 'path';
-import { globalBeforeEach } from '../../../__jest__/before-each';
-import { getTempDir } from '../../../common/electron-helpers';
-import * as network from '../../network';
 import getToken from '../grant-authorization-code';
 import { createBWRedirectMock } from './helpers';
+import { globalBeforeEach } from '../../../__jest__/before-each';
+import * as network from '../../network';
+import fs from 'fs';
+import path from 'path';
+import { getTempDir } from '../../../common/electron-helpers';
 
 // Mock some test things
 const AUTHORIZE_URL = 'https://foo.com/authorizeAuthCode';

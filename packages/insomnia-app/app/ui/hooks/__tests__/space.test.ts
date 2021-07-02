@@ -1,12 +1,12 @@
 import { renderHook, act } from '@testing-library/react-hooks';
-import { mocked } from 'ts-jest/utils';
-import { globalBeforeEach } from '../../../__jest__/before-each';
 import { isLoggedIn as _isLoggedIn } from '../../../account/session';
-import * as models from '../../../models';
-import { Space } from '../../../models/space';
 import MemoryDriver from '../../../sync/store/drivers/memory-driver';
 import { VCS } from '../../../sync/vcs/vcs';
+import { globalBeforeEach } from '../../../__jest__/before-each';
 import { useRemoteSpaces } from '../space';
+import * as models from '../../../models';
+import { Space } from '../../../models/space';
+import { mocked } from 'ts-jest/utils';
 
 jest.mock('../../../account/session', () => ({
   isLoggedIn: jest.fn(),

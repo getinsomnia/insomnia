@@ -1,10 +1,10 @@
 import { generate, runTestsCli, TestSuite } from 'insomnia-testing';
-import { loadDb } from '../db';
-import { loadEnvironment, promptEnvironment } from '../db/models/environment';
-import type { UnitTest, UnitTestSuite } from '../db/models/types';
-import { loadTestSuites, promptTestSuites } from '../db/models/unit-test-suite';
 import type { GlobalOptions } from '../get-options';
+import { loadDb } from '../db';
+import type { UnitTest, UnitTestSuite } from '../db/models/types';
 import { logger, noConsoleLog } from '../logger';
+import { loadTestSuites, promptTestSuites } from '../db/models/unit-test-suite';
+import { loadEnvironment, promptEnvironment } from '../db/models/environment';
 
 export type TestReporter = 'dot' | 'list' | 'spec' | 'min' | 'progress';
 

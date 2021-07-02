@@ -1,6 +1,6 @@
 import React, { Fragment } from 'react';
-import { Breadcrumb } from './breadcrumb';
 import { Header } from './header';
+import { Breadcrumb } from './breadcrumb';
 import { Switch } from './switch';
 
 export default {

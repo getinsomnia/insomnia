@@ -1,5 +1,5 @@
-import { ListGroupItem } from 'insomnia-components';
 import styled from 'styled-components';
+import { ListGroupItem } from 'insomnia-components';
 const ProtoListItem = styled(ListGroupItem).attrs(() => ({
   className: 'row-spaced',
 }))`

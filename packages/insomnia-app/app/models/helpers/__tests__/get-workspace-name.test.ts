@@ -1,6 +1,6 @@
 import * as models from '../../../models';
-import { WorkspaceScopeKeys } from '../../workspace';
 import getWorkspaceName from '../get-workspace-name';
+import { WorkspaceScopeKeys } from '../../workspace';
 
 describe('getWorkspaceName', () => {
   it('returns workspace name', () => {

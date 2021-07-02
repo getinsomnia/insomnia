@@ -5,10 +5,10 @@ import fs from 'fs';
 // That applies to these Enum type imports, but also applies to the members of the class below.
 import { CurlAuth } from 'node-libcurl/dist/enum/CurlAuth';
 import { CurlCode } from 'node-libcurl/dist/enum/CurlCode';
-import { CurlFeature } from 'node-libcurl/dist/enum/CurlFeature';
-import { CurlHttpVersion } from 'node-libcurl/dist/enum/CurlHttpVersion';
 import { CurlInfoDebug } from 'node-libcurl/dist/enum/CurlInfoDebug';
+import { CurlFeature } from 'node-libcurl/dist/enum/CurlFeature';
 import { CurlNetrc } from 'node-libcurl/dist/enum/CurlNetrc';
+import { CurlHttpVersion } from 'node-libcurl/dist/enum/CurlHttpVersion';
 
 class Curl extends EventEmitter {
   _options = {};

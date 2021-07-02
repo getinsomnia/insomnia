@@ -1,8 +1,8 @@
-import { join as pathJoin } from 'path';
 import { Readable, Writable } from 'stream';
-import zlib from 'zlib';
 import fuzzysort from 'fuzzysort';
 import * as uuid from 'uuid';
+import zlib from 'zlib';
+import { join as pathJoin } from 'path';
 import { METHOD_OPTIONS, METHOD_DELETE, DEBOUNCE_MILLIS } from './constants';
 
 const ESCAPE_REGEX_MATCH = /[-[\]/{}()*+?.\\^$|]/g;

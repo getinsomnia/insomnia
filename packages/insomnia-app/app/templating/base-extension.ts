@@ -1,9 +1,9 @@
-import { database as db } from '../common/database';
 import * as models from '../models/index';
-import * as pluginContexts from '../plugins/context';
-import { PluginTemplateTag } from './extensions';
-import { decodeEncoding } from './utils';
 import * as templating from './index';
+import * as pluginContexts from '../plugins/context';
+import { database as db } from '../common/database';
+import { decodeEncoding } from './utils';
+import { PluginTemplateTag } from './extensions';
 
 const EMPTY_ARG = '__EMPTY_NUNJUCKS_ARG__';
 

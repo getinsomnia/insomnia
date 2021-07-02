@@ -1,5 +1,5 @@
-import { globalBeforeEach } from '../../../__jest__/before-each';
 import { responseToObject } from '../misc';
+import { globalBeforeEach } from '../../../__jest__/before-each';
 
 describe('responseToObject()', () => {
   beforeEach(globalBeforeEach);

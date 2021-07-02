@@ -1,8 +1,8 @@
-import { createBuilder } from '@develohpanda/fluent-builder';
-import { render, fireEvent } from '@testing-library/react';
 import React from 'react';
-import { grpcMethodDefinitionSchema } from '../../../../context/grpc/__schemas__';
+import { render, fireEvent } from '@testing-library/react';
 import GrpcMethodDropdown from '../grpc-method-dropdown';
+import { grpcMethodDefinitionSchema } from '../../../../context/grpc/__schemas__';
+import { createBuilder } from '@develohpanda/fluent-builder';
 
 const builder = createBuilder(grpcMethodDefinitionSchema);
 

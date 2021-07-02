@@ -1,5 +1,5 @@
-import { writeFile } from 'fs';
 import { escapeJsStr, indent } from './util';
+import { writeFile } from 'fs';
 
 export interface Test {
   name: string

@@ -1,19 +1,3 @@
-import { HttpMethod } from '../common';
-import { dummyPluginDoc, pluginDummy, UserK8sPlugin } from '../declarative-config/jest/test-helpers';
-import { PathPlugin, OperationPlugin } from '../types/k8s-plugins';
-import {
-  OpenApi3Spec,
-  OA3Server,
-  OA3Paths,
-  OA3PathItem,
-  OA3Components,
-  OA3Operation,
-} from '../types/openapi3';
-import {
-  keyAuthPluginDoc,
-  pluginDocWithName,
-  pluginKeyAuth,
-} from './plugin-helpers';
 import {
   flattenPluginDocuments,
   generateK8sPluginConfig,
@@ -26,6 +10,22 @@ import {
   normalizePathPlugins,
   prioritizePlugins,
 } from './plugins';
+import { HttpMethod } from '../common';
+import {
+  keyAuthPluginDoc,
+  pluginDocWithName,
+  pluginKeyAuth,
+} from './plugin-helpers';
+import { PathPlugin, OperationPlugin } from '../types/k8s-plugins';
+import {
+  OpenApi3Spec,
+  OA3Server,
+  OA3Paths,
+  OA3PathItem,
+  OA3Components,
+  OA3Operation,
+} from '../types/openapi3';
+import { dummyPluginDoc, pluginDummy, UserK8sPlugin } from '../declarative-config/jest/test-helpers';
 
 describe('plugins', () => {
   let _iterator = 0;

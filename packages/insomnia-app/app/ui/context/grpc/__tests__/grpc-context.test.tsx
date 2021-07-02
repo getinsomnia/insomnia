@@ -1,5 +1,5 @@
-import { render } from '@testing-library/react';
 import React from 'react';
+import { render } from '@testing-library/react';
 import { GrpcProvider } from '../grpc-context';
 import { grpcIpcRenderer } from '../grpc-ipc-renderer';
 

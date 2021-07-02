@@ -1,6 +1,6 @@
-import { ImportRequest } from './entities';
-import { importers } from './importers';
 import { setDefaults } from './utils';
+import { importers } from './importers';
+import { ImportRequest } from './entities';
 
 export interface RootConverter {
   type: {

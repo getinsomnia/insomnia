@@ -1,7 +1,7 @@
 import fs from 'fs';
-import path from 'path';
 import { globalBeforeEach } from '../../__jest__/before-each';
 import { buildMultipart, DEFAULT_BOUNDARY } from '../multipart';
+import path from 'path';
 
 describe('buildMultipart()', () => {
   beforeEach(globalBeforeEach);

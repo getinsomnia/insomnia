@@ -1,7 +1,7 @@
-import { globalBeforeEach } from '../../__jest__/before-each';
-import { CONTENT_TYPE_GRAPHQL } from '../../common/constants';
 import * as models from '../index';
+import { globalBeforeEach } from '../../__jest__/before-each';
 import { newBodyGraphQL } from '../request';
+import { CONTENT_TYPE_GRAPHQL } from '../../common/constants';
 
 describe('init()', () => {
   beforeEach(globalBeforeEach);

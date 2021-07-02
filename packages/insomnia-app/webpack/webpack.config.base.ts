@@ -1,7 +1,10 @@
 import path from 'path';
 import { Configuration, DefinePlugin, optimize } from 'webpack';
-import 'webpack-dev-server'; // recommended by the docs: https://webpack.js.org/configuration/configuration-languages/ just in case you run into any typescript error when configuring `devServer`
 import pkg from '../package.json';
+
+// recommended by the docs: https://webpack.js.org/configuration/configuration-languages/
+// just in case you run into any typescript error when configuring `devServer`
+import 'webpack-dev-server';
 
 const configuration: Configuration = {
   devtool: 'source-map',

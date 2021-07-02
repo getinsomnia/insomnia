@@ -1,4 +1,3 @@
-import { ipcRenderer } from 'electron';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { hot } from 'react-hot-loader';
@@ -9,12 +8,13 @@ import { getAppLongName, isDevelopment } from '../common/constants';
 import { database as db } from '../common/database';
 import { initializeLogging } from '../common/log';
 import * as models from '../models';
-import { initNewOAuthSession } from '../network/o-auth-2/misc';
 import { init as initPlugins } from '../plugins';
-import { setFont, applyColorScheme } from '../plugins/misc';
 import App from './containers/app';
-import './css/index.less';
 import { init as initStore } from './redux/modules';
+import './css/index.less';
+import { setFont, applyColorScheme } from '../plugins/misc';
+import { initNewOAuthSession } from '../network/o-auth-2/misc';
+import { ipcRenderer } from 'electron';
 
 initializeLogging();
 // Handy little helper

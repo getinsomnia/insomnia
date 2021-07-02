@@ -1,17 +1,5 @@
 import { autoBindMethodsForReact } from 'class-autobind-decorator';
-import {
-  Breadcrumb,
-  Button,
-  Card,
-  CardContainer,
-  Dropdown,
-  DropdownDivider,
-  DropdownItem,
-  Header,
-} from 'insomnia-components';
 import React, { Fragment, PureComponent, ReactNode } from 'react';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import 'swagger-ui-react/swagger-ui.css';
 import { parseApiSpec, ParsedApiSpec } from '../../common/api-specs';
 import {
@@ -28,6 +16,17 @@ import { descendingNumberSort } from '../../common/sorting';
 import { strings } from '../../common/strings';
 import * as models from '../../models';
 import { isDesign, Workspace, WorkspaceScopeKeys } from '../../models/workspace';
+
+import {
+  Breadcrumb,
+  Button,
+  Card,
+  CardContainer,
+  Dropdown,
+  DropdownDivider,
+  DropdownItem,
+  Header,
+} from 'insomnia-components';
 import { MemClient } from '../../sync/git/mem-client';
 import { initializeLocalProjectAndMarkForSync } from '../../sync/vcs/initialize-project';
 import coreLogo from '../images/insomnia-core-logo.png';
@@ -51,6 +50,8 @@ import type {
   HandleImportUriCallback,
   WrapperProps,
 } from './wrapper';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
 interface RenderedCard {
   card: ReactNode;

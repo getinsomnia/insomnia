@@ -1,9 +1,10 @@
 import React, { FunctionComponent } from 'react';
-import Hotkey from '../hotkey';
+
 import { hotKeyRefs } from '../../../common/hotkeys';
 import * as hotkeys from '../../../common/hotkeys';
-import { Pane, PaneBody, PaneHeader } from './pane';
+import Hotkey from '../hotkey';
 import type { HandleImportFileCallback } from '../wrapper';
+import { Pane, PaneBody, PaneHeader } from './pane';
 
 interface Props {
   hotKeyRegistry: hotkeys.HotKeyRegistry;

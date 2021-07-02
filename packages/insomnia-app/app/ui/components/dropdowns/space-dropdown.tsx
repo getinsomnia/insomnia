@@ -1,6 +1,7 @@
 import { Dropdown, DropdownDivider, DropdownItem } from 'insomnia-components';
 import React, { FC, useCallback, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+
 import { getAppName } from '../../../common/constants';
 import { strings } from '../../../common/strings';
 import { BASE_SPACE_ID, Space } from '../../../models/space';

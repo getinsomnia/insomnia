@@ -1,4 +1,5 @@
 import { Schema } from '@develohpanda/fluent-builder';
+
 import { BaseModel, workspace } from '..';
 import { Workspace } from '../workspace';
 

@@ -1,15 +1,17 @@
-import React, { Fragment, PureComponent } from 'react';
-import { autoBindMethodsForReact } from 'class-autobind-decorator';
 import 'swagger-ui-react/swagger-ui.css';
-import { showPrompt } from './modals';
-import type { BaseModel } from '../../models';
+
+import { autoBindMethodsForReact } from 'class-autobind-decorator';
+import React, { Fragment, PureComponent } from 'react';
+
 import { AUTOBIND_CFG, getAppLongName, getAppName, getAppSynopsis } from '../../common/constants';
-import type { HandleImportFileCallback, HandleImportUriCallback, WrapperProps } from './wrapper';
 import { database as db } from '../../common/database';
-import { ForceToWorkspaceKeys } from '../redux/modules/helpers';
-import OnboardingContainer from './onboarding-container';
+import type { BaseModel } from '../../models';
 import { isWorkspace, WorkspaceScopeKeys } from '../../models/workspace';
+import { ForceToWorkspaceKeys } from '../redux/modules/helpers';
 import Analytics from './analytics';
+import { showPrompt } from './modals';
+import OnboardingContainer from './onboarding-container';
+import type { HandleImportFileCallback, HandleImportUriCallback, WrapperProps } from './wrapper';
 
 interface Props {
   wrapperProps: WrapperProps;

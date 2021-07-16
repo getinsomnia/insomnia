@@ -9,13 +9,13 @@ import { VCS } from '../../../sync/vcs/vcs';
 import { useRemoteSpaces } from '../../hooks/space';
 import { setActiveSpace } from '../../redux/modules/global';
 import { createSpace } from '../../redux/modules/space';
-import { selectActiveSpace, selectSpaces } from '../../redux/selectors';
+import { selectActiveSpace, selectIsRemoteSpace, selectSpaces } from '../../redux/selectors';
 import { showModal } from '../modals';
 import SpaceSettingsModal from '../modals/space-settings-modal';
 
 type SpaceSubset = Pick<Space, '_id' | 'name' | 'remoteId'>;
 
-const defaultSpace: SpaceSubset = {
+const baseSpace: SpaceSubset = {
   _id: BASE_SPACE_ID,
   name: getAppName(),
   remoteId: null,
@@ -25,19 +25,48 @@ const cog = <i className="fa fa-cog" />;
 const plus = <SvgIcon icon="plus" />;
 const spinner = <i className="fa fa-spin fa-refresh" />;
 const home = <SvgIcon icon="home" />;
-const globe = <SvgIcon icon="globe" />;
+const remoteSpace = <SvgIcon icon="globe" />;
+const localSpace = <SvgIcon icon="globe" />;
 
 const Checkmark = styled(SvgIcon)({
   fill: 'var(--color-surprise)',
 });
 
-const SpaceItem = styled(DropdownItem)({
-  fontWeight: 500,
-});
-
 interface Props {
   vcs?: VCS;
 }
+
+const BoldDropdownItem = styled(DropdownItem)({
+  fontWeight: 500,
+});
+
+const SpaceDropdownItem: FC<{ space: SpaceSubset }> = ({
+  space: {
+    _id: spaceId,
+    name,
+  },
+}) => {
+  console.log('rendering space', { spaceId, name });
+
+  const dispatch = useDispatch();
+  const setActive = useCallback((id: string) => dispatch(setActiveSpace(id)), [dispatch]);
+  const isRemote = useSelector(selectIsRemoteSpace(spaceId));
+
+  const activeSpace = useSelector(selectActiveSpace);
+  const selectedSpace = activeSpace || baseSpace;
+  return (
+    <BoldDropdownItem
+      key={spaceId}
+      icon={spaceId === baseSpace._id ? home : isRemote ? remoteSpace : localSpace}
+      right={spaceId === selectedSpace._id && <Checkmark icon='checkmark' />}
+      value={spaceId}
+      onClick={setActive}
+    >
+      {name}
+    </BoldDropdownItem>
+  );
+};
+SpaceDropdownItem.displayName = 'DropdownItem';
 
 export const SpaceDropdown: FC<Props> = ({ vcs }) => {
   const { loading, refresh } = useRemoteSpaces(vcs);
@@ -47,26 +76,13 @@ export const SpaceDropdown: FC<Props> = ({ vcs }) => {
 
   // figure out which space is selected
   const activeSpace = useSelector(selectActiveSpace);
-  const selectedSpace = activeSpace || defaultSpace;
-  const spaceHasSettings = selectedSpace !== defaultSpace && selectedSpace.remoteId === null;
+  const selectedSpace = activeSpace || baseSpace;
+  const spaceHasSettings = selectedSpace !== baseSpace && selectedSpace.remoteId === null;
 
   // select a new space
   const dispatch = useDispatch();
-  const setActive = useCallback((id) => dispatch(setActiveSpace(id)), [dispatch]);
   const createNew = useCallback(() => dispatch(createSpace()), [dispatch]);
   const showSettings = useCallback(() => showModal(SpaceSettingsModal), []);
-
-  const renderDropdownItem = useCallback(({ _id, name }: SpaceSubset) => (
-    <SpaceItem
-      key={_id}
-      icon={_id === defaultSpace._id ? home : globe}
-      right={_id === selectedSpace._id && <Checkmark icon='checkmark' />}
-      value={_id}
-      onClick={setActive}
-    >
-      {name}
-    </SpaceItem>),
-  [selectedSpace, setActive]);
 
   // dropdown button
   const button = useMemo(() => (
@@ -76,12 +92,20 @@ export const SpaceDropdown: FC<Props> = ({ vcs }) => {
     </button>
   ), [selectedSpace]);
 
+  console.log({ spaces });
+
   return (
     <Dropdown renderButton={button} onOpen={refresh}>
-      {renderDropdownItem(defaultSpace)}
+      <SpaceDropdownItem space={baseSpace} />
+
       <DropdownDivider>All spaces{' '}{loading && spinner}</DropdownDivider>
 
-      {spaces.map(renderDropdownItem)}
+      {spaces.map(space => {
+        console.log('spy', space);
+        return (
+          <SpaceDropdownItem key={space._id} space={space} />
+        );
+      })}
 
       {spaceHasSettings && <>
         <DropdownDivider />

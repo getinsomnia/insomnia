@@ -59,6 +59,7 @@ export const selectSettings = createSelector(
   selectEntitiesLists,
   entities => entities.settings[0] || models.settings.init());
 
+/** WARNING: this does not include the base space */
 export const selectSpaces = createSelector(
   selectEntitiesLists,
   entities => entities.spaces,
@@ -70,6 +71,11 @@ export const selectActiveSpace = createSelector(
   (entities, activeSpaceId) => {
     return entities.spaces[activeSpaceId || 'n/a'];
   },
+);
+
+export const selectIsRemoteSpace = (spaceId: string) => createSelector(
+  selectSpaces,
+  spaces => Boolean(spaces.find(({ _id }) => _id === spaceId)?.remoteId),
 );
 
 export const selectAllWorkspaces = createSelector(

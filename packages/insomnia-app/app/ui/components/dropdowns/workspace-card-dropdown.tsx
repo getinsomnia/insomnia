@@ -14,10 +14,9 @@ import type { Workspace } from '../../../models/workspace';
 import getWorkspaceName from '../../../models/helpers/get-workspace-name';
 import * as workspaceOperations from '../../../models/helpers/workspace-operations';
 import { WorkspaceScopeKeys } from '../../../models/workspace';
-import { useDispatch } from 'react-redux';
-import { setActiveWorkspace } from '../../redux/modules/global';
 import { useLoadingRecord } from '../../hooks/use-loading-record';
 import { SvgIcon } from 'insomnia-components';
+import { showWorkspaceDuplicateModal } from '../modals/workspace-duplicate-modal';
 
 interface Props {
   workspace: Workspace;
@@ -27,21 +26,9 @@ interface Props {
 const spinner = <i className="fa fa-refresh fa-spin" />;
 
 const useWorkspaceHandlers = ({ workspace, apiSpec }: { workspace: Workspace; apiSpec: ApiSpec; }) => {
-  const dispatch = useDispatch();
-
   const handleDuplicate = useCallback(() => {
-    showPrompt({
-      title: `Duplicate ${getWorkspaceLabel(workspace).singular}`,
-      defaultValue: getWorkspaceName(workspace, apiSpec),
-      submitName: 'Create',
-      selectText: true,
-      label: 'New Name',
-      onComplete: async newName => {
-        const newWorkspace = await workspaceOperations.duplicate(workspace, newName);
-        dispatch(setActiveWorkspace(newWorkspace._id));
-      },
-    });
-  }, [apiSpec, workspace, dispatch]);
+    showWorkspaceDuplicateModal({ workspace, apiSpec });
+  }, [apiSpec, workspace]);
 
   const handleRename = useCallback(() => {
     showPrompt({

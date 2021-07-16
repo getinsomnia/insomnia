@@ -85,6 +85,7 @@ import { RequestGroup } from '../../models/request-group';
 import SpaceSettingsModal from './modals/space-settings-modal';
 import { AppProps } from '../containers/app';
 import { initializeSpectral, isLintError } from '../../common/spectral';
+import { WorkspaceDuplicateModal } from './modals/workspace-duplicate-modal';
 
 const spectral = initializeSpectral();
 
@@ -96,7 +97,6 @@ export type WrapperProps = AppProps & {
   handleCreateRequest: (id: string) => void;
   handleDuplicateRequest: Function;
   handleDuplicateRequestGroup: (requestGroup: RequestGroup) => void;
-  handleDuplicateWorkspace: Function;
   handleCreateRequestGroup: (parentId: string) => void;
   handleGenerateCodeForActiveRequest: Function;
   handleGenerateCode: Function;
@@ -471,7 +471,6 @@ class Wrapper extends PureComponent<WrapperProps, State> {
       activity,
       gitVCS,
       handleActivateRequest,
-      handleDuplicateWorkspace,
       handleExportRequestsToFile,
       handleGetRenderContext,
       handleInitializeEntities,
@@ -530,6 +529,7 @@ class Wrapper extends PureComponent<WrapperProps, State> {
             <RequestRenderErrorModal ref={registerModal} />
             <GenerateConfigModal ref={registerModal} settings={settings} />
             <SpaceSettingsModal ref={registerModal} />
+            <WorkspaceDuplicateModal ref={registerModal} />
 
             <CodePromptModal
               ref={registerModal}
@@ -611,7 +611,6 @@ class Wrapper extends PureComponent<WrapperProps, State> {
                 handleGetRenderContext={handleGetRenderContext}
                 nunjucksPowerUserMode={settings.nunjucksPowerUserMode}
                 handleRemoveWorkspace={this._handleRemoveActiveWorkspace}
-                handleDuplicateWorkspace={handleDuplicateWorkspace}
                 handleClearAllResponses={this._handleActiveWorkspaceClearAllResponses}
                 isVariableUncovered={isVariableUncovered}
               /> : null}

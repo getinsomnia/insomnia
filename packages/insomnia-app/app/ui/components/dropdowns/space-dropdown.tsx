@@ -1,9 +1,8 @@
 import { Dropdown, DropdownDivider, DropdownItem } from 'insomnia-components';
 import React, { FC, useCallback, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { getAppName } from '../../../common/constants';
 import { strings } from '../../../common/strings';
-import { BASE_SPACE_ID, Space } from '../../../models/space';
+import { defaultSpace, SpaceSubset } from '../../../models/helpers/default-space';
 import { VCS } from '../../../sync/vcs/vcs';
 import { useRemoteSpaces } from '../../hooks/space';
 import { setActiveSpace } from '../../redux/modules/global';
@@ -11,14 +10,6 @@ import { createSpace } from '../../redux/modules/space';
 import { selectActiveSpace, selectSpaces } from '../../redux/selectors';
 import { showModal } from '../modals';
 import SpaceSettingsModal from '../modals/space-settings-modal';
-
-type SpaceSubset = Pick<Space, '_id' | 'name' | 'remoteId'>;
-
-const defaultSpace: SpaceSubset = {
-  _id: BASE_SPACE_ID,
-  name: getAppName(),
-  remoteId: null,
-};
 
 const check = <i className="fa fa-check" />;
 const cog = <i className="fa fa-cog" />;

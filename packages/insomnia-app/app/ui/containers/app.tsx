@@ -103,14 +103,11 @@ import { GitVCS, GIT_CLONE_DIR, GIT_INSOMNIA_DIR, GIT_INTERNAL_DIR } from '../..
 import { NeDBClient } from '../../sync/git/ne-db-client';
 import { fsClient } from '../../sync/git/fs-client';
 import { routableFSClient } from '../../sync/git/routable-fs-client';
-import { getWorkspaceLabel } from '../../common/get-workspace-label';
 import * as requestOperations from '../../models/helpers/request-operations';
 import { GrpcProvider } from '../context/grpc';
 import { sortMethodMap } from '../../common/sorting';
 import withDragDropContext from '../context/app/drag-drop-context';
 import { trackSegmentEvent } from '../../common/analytics';
-import getWorkspaceName from '../../models/helpers/get-workspace-name';
-import * as workspaceOperations from '../../models/helpers/workspace-operations';
 import { isCollection, isWorkspace } from '../../models/workspace';
 import { GrpcRequest, isGrpcRequest, isGrpcRequestId } from '../../models/grpc-request';
 import { isEnvironment } from '../../models/environment';
@@ -496,32 +493,6 @@ class App extends PureComponent<AppProps, State> {
         models.stats.incrementCreatedRequests();
       },
     });
-  }
-
-  _workspaceDuplicateById(callback: () => void, workspaceId: string) {
-    const workspace = this.props.workspaces.find(w => w._id === workspaceId);
-    const apiSpec = this.props.apiSpecs.find(s => s.parentId === workspaceId);
-    showPrompt({
-      // @ts-expect-error -- TSCONVERSION workspace can be null
-      title: `Duplicate ${getWorkspaceLabel(workspace).singular}`,
-      // @ts-expect-error -- TSCONVERSION workspace can be null
-      defaultValue: getWorkspaceName(workspace, apiSpec),
-      submitName: 'Create',
-      selectText: true,
-      label: 'New Name',
-      onComplete: async name => {
-        // @ts-expect-error -- TSCONVERSION workspace can be null
-        const newWorkspace = await workspaceOperations.duplicate(workspace, name);
-        await this.props.handleSetActiveWorkspace(newWorkspace._id);
-        callback();
-      },
-    });
-  }
-
-  _workspaceDuplicate(callback: () => void) {
-    if (this.props.activeWorkspace) {
-      this._workspaceDuplicateById(callback, this.props.activeWorkspace._id);
-    }
   }
 
   async _fetchRenderContext() {
@@ -1513,7 +1484,6 @@ class App extends PureComponent<AppProps, State> {
                 handleGetRenderContext={this._handleGetRenderContext}
                 handleDuplicateRequest={this._requestDuplicate}
                 handleDuplicateRequestGroup={App._requestGroupDuplicate}
-                handleDuplicateWorkspace={this._workspaceDuplicate}
                 handleCreateRequestGroup={this._requestGroupCreate}
                 handleGenerateCode={App._handleGenerateCode}
                 handleGenerateCodeForActiveRequest={this._handleGenerateCodeForActiveRequest}

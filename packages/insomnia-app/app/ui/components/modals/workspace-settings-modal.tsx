@@ -18,6 +18,7 @@ import getWorkspaceName from '../../../models/helpers/get-workspace-name';
 import { getWorkspaceLabel } from '../../../common/get-workspace-label';
 import * as workspaceOperations from '../../../models/helpers/workspace-operations';
 import { HandleGetRenderContext, HandleRender } from '../../../common/render';
+import { showWorkspaceDuplicateModal } from './workspace-duplicate-modal';
 
 interface Props {
   clientCertificates: ClientCertificate[];
@@ -32,7 +33,6 @@ interface Props {
   handleRender: HandleRender;
   handleGetRenderContext: HandleGetRenderContext;
   handleRemoveWorkspace: Function;
-  handleDuplicateWorkspace: Function;
   handleClearAllResponses: Function;
 }
 
@@ -89,9 +89,8 @@ class WorkspaceSettingsModal extends PureComponent<Props, State> {
   }
 
   _handleDuplicateWorkspace() {
-    this.props.handleDuplicateWorkspace(() => {
-      this.hide();
-    });
+    const { workspace, apiSpec } = this.props;
+    showWorkspaceDuplicateModal({ workspace, apiSpec, onDone: this.hide });
   }
 
   _handleToggleCertificateForm() {

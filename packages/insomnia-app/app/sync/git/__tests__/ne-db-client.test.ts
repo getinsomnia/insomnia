@@ -6,6 +6,7 @@ import { assertAsyncError, setupDateMocks } from './util';
 import { NeDBClient } from '../ne-db-client';
 import path from 'path';
 import { GIT_CLONE_DIR, GIT_INSOMNIA_DIR, GIT_INSOMNIA_DIR_NAME } from '../git-vcs';
+import { BASE_SPACE_ID } from '../../../models/space';
 
 describe('NeDBClient', () => {
   afterAll(() => jest.restoreAllMocks());
@@ -64,7 +65,7 @@ describe('NeDBClient', () => {
       expect(YAML.parse(await pNeDB.readFile(wrk1Yml, 'utf8'))).toEqual(
         expect.objectContaining({
           _id: 'wrk_1',
-          parentId: null,
+          parentId: BASE_SPACE_ID,
         }),
       );
       expect(YAML.parse(await pNeDB.readFile(req1Yml, 'utf8'))).toEqual(

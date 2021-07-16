@@ -1,4 +1,5 @@
 import { ACTIVITY_DEBUG } from '../common/constants';
+import { BASE_SPACE_ID } from '../models/space';
 import { RootState } from '../ui/redux/modules';
 import * as entities from '../ui/redux/modules/entities';
 
@@ -7,7 +8,7 @@ const reduxStateForTest = async (activeWorkspaceId: string | null = null): Promi
   global: {
     activeWorkspaceId,
     activeActivity: ACTIVITY_DEBUG,
-    activeSpaceId: null,
+    activeSpaceId: BASE_SPACE_ID,
     isLoading: false,
     isLoggedIn: false,
     loadingRequestIds: {},

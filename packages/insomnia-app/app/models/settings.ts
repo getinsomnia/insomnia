@@ -167,6 +167,7 @@ export async function patch(patch: Partial<Settings>) {
 }
 
 export async function getOrCreate() {
+  // but what happens here when new settings need to be added??
   const results = await db.all<Settings>(type) || [];
 
   if (results.length === 0) {
